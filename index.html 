@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ori — paper blooms</title>
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  <style>
+    :root {
+      --blue: #A8CEDE;
+      --sky: #C8E4F0;
+      --cream: #FFF0E6;
+      --brown: #6B3A2A;
+      --dark: #0A2A3A;
+      --sage: #8FBF8F;
+      --butter: #F5D98A;
+      --peach: #F2994A;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Bai Jamjuree', sans-serif;
+      background: var(--cream);
+      max-width: 390px;
+      margin: 0 auto;
+      min-height: 100vh;
+    }
+    @import url('https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@300;400;500;600;700&display=swap');
+
+    /* PAGES */
+    .page { display: none; padding-bottom: 80px; }
+    .page.active { display: block; }
+
+    /* TOP BAR */
+    .topbar {
+      background: var(--blue);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .topbar-brand { display: flex; align-items: center; gap: 8px; }
+    .topbar-name { font-size: 20px; font-weight: 700; color: var(--dark); }
+    .topbar-sub { font-size: 9px; color: #1A5A7A; font-weight: 300; }
+
+    /* BOTTOM NAV */
+    .bottom-nav {
+      position: fixed; bottom: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 100%; max-width: 390px;
+      background: white;
+      border-top: 0.5px solid #E8D4C0;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      padding: 10px 0 16px;
+      z-index: 100;
+    }
+    .nav-item {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 3px;
+      cursor: pointer; color: #8B6A52;
+      font-size: 10px; font-weight: 500;
+    }
+    .nav-item.active { color: var(--dark); }
+    .nav-item svg { width: 22px; height: 22px; }
+
+    /* HERO */
+    .hero {
+      background: var(--dark);
+      margin: 16px;
+      border-radius: 16px;
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .hero-slogan { font-size: 15px; color: var(--cream); font-style: italic; line-height: 1.3; }
+    .hero-voice { font-size: 11px; color: var(--blue); margin-top: 8px; font-style: italic; }
+    .btn-primary {
+      background: var(--blue); border: none;
+      border-radius: 20px; padding: 8px 18px;
+      font-family: inherit; font-size: 12px;
+      font-weight: 600; color: var(--dark);
+      cursor: pointer; margin-top: 12px;
+      display: inline-block;
+    }
+
+    /* SECTION */
+    .section { padding: 0 16px; margin-bottom: 20px; }
+    .section-title {
+      font-size: 14px; font-weight: 700;
+      color: var(--dark); margin-bottom: 12px;
+    }
+
+    /* PRODUCT CARD */
+    .product-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .product-card {
+      background: white; border-radius: 14px;
+      border: 0.5px solid #E8D4C0; overflow: hidden;
+      cursor: pointer;
+    }
+    .product-img {
+      height: 110px; background: var(--sky);
+      display: flex; align-items: center;
+      justify-content: center; font-size: 40px;
+    }
+    .product-info { padding: 10px; }
+    .product-name { font-size: 13px; font-weight: 600; color: var(--dark); }
+    .product-desc { font-size: 10px; color: #8B6A52; font-weight: 300; margin-top: 2px; }
+    .product-price { font-size: 14px; font-weight: 700; color: var(--dark); margin-top: 6px; }
+
+    /* POINTS CARD */
+    .points-card {
+      background: var(--dark); border-radius: 14px;
+      padding: 14px 16px; margin: 16px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .points-icon {
+      background: var(--blue); border-radius: 10px;
+      width: 40px; height: 40px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; flex-shrink: 0;
+    }
+    .points-title { font-size: 12px; font-weight: 600; color: var(--cream); }
+    .points-bar-wrap { margin-top: 4px; display: flex; gap: 3px; }
+    .points-bar-fill { height: 5px; background: var(--blue); border-radius: 3px; }
+    .points-bar-empty { height: 5px; background: #1A3A5A; border-radius: 3px; }
+    .points-sub { font-size: 10px; color: var(--blue); font-weight: 300; margin-top: 3px; }
+
+    /* ORDER FORM */
+    .form-group { margin-bottom: 14px; }
+    label { font-size: 12px; font-weight: 600; color: var(--brown); display: block; margin-bottom: 6px; }
+    input, textarea, select {
+      width: 100%; padding: 10px 14px;
+      border: 0.5px solid #E8D4C0;
+      border-radius: 10px; font-family: inherit;
+      font-size: 13px; background: white;
+      color: var(--dark); outline: none;
+    }
+    input:focus, textarea:focus { border-color: var(--blue); }
+
+    /* SUMMARY */
+    .summary-card {
+      background: white; border-radius: 14px;
+      border: 0.5px solid #E8D4C0;
+      padding: 14px; margin-bottom: 10px;
+    }
+    .summary-row {
+      display: flex; justify-content: space-between;
+      padding: 6px 0;
+      border-bottom: 0.5px solid #F0E8E0;
+      font-size: 13px; color: var(--dark);
+    }
+    .summary-row:last-child { border-bottom: none; }
+    .summary-total {
+      font-size: 16px; font-weight: 700;
+      color: var(--dark);
+    }
+
+    /* TIER BADGE */
+    .tier-badge {
+      display: inline-block; padding: 3px 10px;
+      border-radius: 20px; font-size: 11px; font-weight: 600;
+    }
+
+    .loading {
+      text-align: center; padding: 40px;
+      color: var(--brown); font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-brand">
+    <div>
+      <div class="topbar-name">Ori</div>
+      <div class="topbar-sub">paper flowers</div>
+    </div>
+  </div>
+  <div id="user-avatar" style="width:32px;height:32px;border-radius:50%;background:var(--sky);overflow:hidden;">
+  </div>
+</div>
+
+<!-- PAGE: HOME -->
+<div id="page-home" class="page active">
+  <div class="hero">
+    <div>
+      <div class="hero-slogan">paper blooms,<br>real feelings.</div>
+      <div class="hero-voice" id="hero-voice">"สวัสดีค่ะ! โทริดีใจมากที่มานะคะ~"</div>
+      <button class="btn-primary" onclick="showPage('catalog')">ดูดอกไม้ทั้งหมด</button>
+    </div>
+  </div>
+
+  <!-- Petal Points Banner -->
+  <div class="points-card" onclick="showPage('points')">
+    <div class="points-icon">🌸</div>
+    <div style="flex:1">
+      <div class="points-title" id="points-title">Petal Points — 0 กลีบ</div>
+      <div class="points-bar-wrap">
+        <div class="points-bar-fill" id="points-bar" style="width:0%"></div>
+        <div class="points-bar-empty" style="flex:1"></div>
+      </div>
+      <div class="points-sub" id="points-sub">เริ่มสะสมกลีบได้เลยค่ะ~</div>
+    </div>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+      <path d="M9 18L15 12L9 6" stroke="#A8CEDE" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+  </div>
+
+  <!-- Featured Products -->
+  <div class="section">
+    <div class="section-title">โทริแนะนำ</div>
+    <div class="product-grid" id="featured-products">
+      <div class="loading">กำลังโหลดค่ะ~</div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE: CATALOG -->
+<div id="page-catalog" class="page">
+  <div style="padding:16px 16px 8px">
+    <div class="section-title">เลือกดอกไม้เลยนะคะ~</div>
+  </div>
+  <div class="section">
+    <div class="product-grid" id="all-products">
+      <div class="loading">กำลังโหลดค่ะ~</div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE: ORDER FORM -->
+<div id="page-order" class="page">
+  <div style="padding:16px">
+    <div style="margin-bottom:16px">
+      <div class="section-title">กรอกรายละเอียดค่ะ~</div>
+    </div>
+
+    <div id="selected-product-info" class="summary-card" style="margin-bottom:16px">
+    </div>
+
+    <div class="form-group">
+      <label>ข้อความในการ์ด (ถ้ามี)</label>
+      <textarea id="card-message" rows="2" placeholder="โทริจะเขียนให้เลยนะคะ~"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>ที่อยู่จัดส่ง</label>
+      <textarea id="address" rows="3" placeholder="บ้านเลขที่ ซอย ถนน แขวง เขต จังหวัด รหัสไปรษณีย์" required></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>เบอร์โทรศัพท์</label>
+      <input type="tel" id="phone" placeholder="08X-XXX-XXXX" required>
+    </div>
+
+    <div class="form-group">
+      <label>วันที่ต้องการรับ (อย่างน้อย 3 วัน)</label>
+      <input type="date" id="delivery-date" required>
+    </div>
+
+    <button class="btn-primary" style="width:100%;padding:14px;font-size:14px;border-radius:12px" onclick="goToSummary()">
+      ดูสรุปออเดอร์
+    </button>
+  </div>
+</div>
+
+<!-- PAGE: ORDER SUMMARY -->
+<div id="page-summary" class="page">
+  <div style="padding:16px">
+    <div style="margin-bottom:16px">
+      <div class="section-title">สรุปออเดอร์ค่ะ~</div>
+    </div>
+
+    <div class="summary-card" id="summary-content"></div>
+
+    <div style="background:#0A2A3A;border-radius:12px;padding:12px 14px;margin-bottom:14px;display:flex;gap:10px;align-items:flex-start">
+      <div style="font-size:24px;flex-shrink:0">🌸</div>
+      <p style="font-size:12px;color:#A8CEDE;font-style:italic" id="tori-confirm-voice">
+        "โทริจะพับดอกไม้ให้ด้วยใจเลยนะคะ~"
+      </p>
+    </div>
+
+    <button class="btn-primary" style="width:100%;padding:14px;font-size:14px;border-radius:12px" onclick="submitOrder()">
+      ยืนยันและส่งออเดอร์
+    </button>
+    <button onclick="showPage('order')" style="width:100%;padding:12px;font-size:13px;border-radius:12px;background:transparent;border:0.5px solid #E8D4C0;font-family:inherit;color:var(--brown);cursor:pointer;margin-top:8px">
+      แก้ไข
+    </button>
+  </div>
+</div>
+
+<!-- PAGE: POINTS -->
+<div id="page-points" class="page">
+  <div style="padding:16px">
+    <div class="section-title" style="margin-bottom:16px">กลีบของโทริค่ะ~</div>
+    <div id="points-detail"></div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <div class="nav-item active" id="nav-home" onclick="showPage('home')">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M3 12L12 3L21 12V21H15V15H9V21H3V12Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+    หน้าแรก
+  </div>
+  <div class="nav-item" id="nav-catalog" onclick="showPage('catalog')">
+    <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="14" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="3" y="14" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="14" y="14" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.8"/></svg>
+    สินค้า
+  </div>
+  <div class="nav-item" id="nav-points" onclick="showPage('points')">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M12 2C10 2 8 3.5 7.5 5.5C5.5 4.5 3 5.5 2 7.5C1 9.5 2 11.5 4 12.5C2 13.5 1 15.5 2 17.5C3 19.5 5.5 20.5 7.5 19.5C8 21.5 10 23 12 23C14 23 16 21.5 16.5 19.5C18.5 20.5 21 19.5 22 17.5C23 15.5 22 13.5 20 12.5C22 11.5 23 9.5 22 7.5C21 5.5 18.5 4.5 16.5 5.5C16 3.5 14 2 12 2Z" stroke="currentColor" stroke-width="1.8"/></svg>
+    แต้ม
+  </div>
+</div>
+
+<script>
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby6lSPOxj_AI9MhQRq6Kg1CVyB2xTn_cY0GxyW_14QjBHDOPEhLNUG6_uar4Y1zszhj/exec'
+const LIFF_ID = '2009801886-j4H29HTq'
+
+let currentUser = null
+let userPoints = 0
+let userTier = 'bud'
+let selectedProduct = null
+let catalog = []
+
+// ── INIT ──
+async function init() {
+  await liff.init({ liffId: LIFF_ID })
+  if (!liff.isLoggedIn()) {
+    liff.login()
+    return
+  }
+
+  const profile = await liff.getProfile()
+  currentUser = profile
+
+  // แสดง avatar
+  const avatar = document.getElementById('user-avatar')
+  avatar.innerHTML = `<img src="${profile.pictureUrl}" style="width:100%;height:100%;object-fit:cover">`
+
+  // ดึง user data
+  await loadUserData()
+  await loadCatalog()
+}
+
+// ── LOAD USER DATA ──
+async function loadUserData() {
+  try {
+    const res = await fetch(`${APPS_SCRIPT_URL}?type=user&line_user_id=${currentUser.userId}`)
+    const data = await res.json()
+    userPoints = data.points || 0
+    userTier = data.tier || 'bud'
+    updatePointsUI()
+  } catch(e) {
+    console.log('load user error', e)
+  }
+}
+
+function updatePointsUI() {
+  const tierEmoji = { bud: '🌱', bloom: '🌸', blossom: '🌺' }
+  const tierMax = { bud: 10, bloom: 30, blossom: 99 }
+  const progress = Math.min((userPoints / tierMax[userTier]) * 100, 100)
+
+  document.getElementById('points-title').textContent =
+    `Petal Points — ${userPoints} กลีบ`
+  document.getElementById('points-bar').style.width = `${progress}%`
+
+  if (userTier === 'bloom') {
+    document.getElementById('points-sub').textContent = `อีก ${30 - userPoints} กลีบ → Blossom`
+  } else if (userTier === 'bud') {
+    document.getElementById('points-sub').textContent = `อีก ${10 - userPoints} กลีบ → Bloom`
+  } else {
+    document.getElementById('points-sub').textContent = `Blossom tier — ขอบคุณมากนะคะ~`
+  }
+
+  // Points page
+  const tierName = { bud: 'Bud 🌱', bloom: 'Bloom 🌸', blossom: 'Blossom 🌺' }
+  const discount = { bud: 0, bloom: 5, blossom: 10 }
+  document.getElementById('points-detail').innerHTML = `
+    <div style="background:white;border-radius:14px;border:0.5px solid #E8D4C0;padding:16px;margin-bottom:12px">
+      <div style="font-size:11px;color:#8B6A52;margin-bottom:4px">tier ปัจจุบัน</div>
+      <div style="font-size:22px;font-weight:700;color:#0A2A3A">${tierName[userTier]}</div>
+      <div style="font-size:13px;color:#6B3A2A;margin-top:4px">${userPoints} กลีบสะสม</div>
+      ${discount[userTier] > 0 ? `<div style="font-size:11px;color:#8FBF8F;margin-top:4px">ส่วนลด ${discount[userTier]}% ทุกออเดอร์</div>` : ''}
+    </div>
+    <div style="background:#EEF7FF;border-radius:12px;padding:12px 14px;font-size:12px;color:#0A2A3A">
+      <div style="font-weight:600;margin-bottom:6px">วิธีสะสมกลีบ</div>
+      <div>ทุก 100 ฿ = 1 กลีบ</div>
+      <div style="margin-top:4px;color:#4A8AAA">🎂 誕生月: +3 กลีบฟรี</div>
+      <div style="margin-top:4px;color:#888;font-size:11px">กลีบหมดอายุ 31 ธ.ค. ของทุกปี</div>
+    </div>
+  `
+}
+
+// ── LOAD CATALOG ──
+async function loadCatalog() {
+  try {
+    const res = await fetch(`${APPS_SCRIPT_URL}?type=catalog`)
+    catalog = await res.json()
+    renderProducts()
+  } catch(e) {
+    // fallback catalog
+    catalog = [
+      { product_id: '1', ชื่อสินค้า: 'ช่อ 5 กลีบ', ราคา: 290, รายละเอียด: 'พับด้วยมือ · 2-3 วัน', สถานะ: 'active' },
+      { product_id: '2', ชื่อสินค้า: 'ช่อ Butter', ราคา: 350, รายละเอียด: 'edition พิเศษ · 3-4 วัน', สถานะ: 'active' },
+    ]
+    renderProducts()
+  }
+}
+
+function renderProducts() {
+  const active = catalog.filter(p => p['สถานะ'] === 'active')
+  const html = active.map(p => `
+    <div class="product-card" onclick="selectProduct(${p['product_id']})">
+      <div class="product-img">🌸</div>
+      <div class="product-info">
+        <div class="product-name">${p['ชื่อสินค้า']}</div>
+        <div class="product-desc">${p['รายละเอียด'] || ''}</div>
+        <div class="product-price">฿ ${Number(p['ราคา']).toLocaleString()}</div>
+      </div>
+    </div>
+  `).join('')
+
+  document.getElementById('featured-products').innerHTML = html
+  document.getElementById('all-products').innerHTML = html
+}
+
+// ── SELECT PRODUCT ──
+function selectProduct(id) {
+  selectedProduct = catalog.find(p => p['product_id'] == id)
+  if (!selectedProduct) return
+
+  // set min date (3 วัน)
+  const minDate = new Date()
+  minDate.setDate(minDate.getDate() + 3)
+  document.getElementById('delivery-date').min = minDate.toISOString().split('T')[0]
+
+  // แสดงสินค้าที่เลือก
+  const discount = getDiscount()
+  const finalPrice = selectedProduct['ราคา'] - discount
+  document.getElementById('selected-product-info').innerHTML = `
+    <div style="font-size:13px;font-weight:600;color:#0A2A3A">${selectedProduct['ชื่อสินค้า']}</div>
+    <div style="font-size:11px;color:#8B6A52;margin-top:2px">${selectedProduct['รายละเอียด'] || ''}</div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+      <div style="font-size:16px;font-weight:700;color:#0A2A3A">฿ ${finalPrice.toLocaleString()}</div>
+      ${discount > 0 ? `<div style="font-size:11px;color:#8FBF8F">ส่วนลด ${getDiscountPercent()}%</div>` : ''}
+    </div>
+  `
+
+  showPage('order')
+}
+
+function getDiscountPercent() {
+  return { bud: 0, bloom: 5, blossom: 10 }[userTier] || 0
+}
+
+function getDiscount() {
+  return Math.floor(selectedProduct['ราคา'] * getDiscountPercent() / 100)
+}
+
+// ── GO TO SUMMARY ──
+function goToSummary() {
+  const address = document.getElementById('address').value
+  const phone = document.getElementById('phone').value
+  const date = document.getElementById('delivery-date').value
+
+  if (!address || !phone || !date) {
+    alert('กรุณากรอกข้อมูลให้ครบนะคะ~')
+    return
+  }
+
+  const discount = getDiscount()
+  const finalPrice = selectedProduct['ราคา'] - discount
+
+  document.getElementById('summary-content').innerHTML = `
+    <div class="summary-row"><span>สินค้า</span><span>${selectedProduct['ชื่อสินค้า']}</span></div>
+    <div class="summary-row"><span>ราคา</span><span>฿ ${Number(selectedProduct['ราคา']).toLocaleString()}</span></div>
+    ${discount > 0 ? `<div class="summary-row"><span>ส่วนลด ${getDiscountPercent()}%</span><span style="color:#8FBF8F">-฿ ${discount}</span></div>` : ''}
+    <div class="summary-row"><span style="font-weight:700">ยอดรวม</span><span class="summary-total">฿ ${finalPrice.toLocaleString()}</span></div>
+    <div class="summary-row"><span>ที่อยู่</span><span style="text-align:right;max-width:60%">${address}</span></div>
+    <div class="summary-row"><span>เบอร์</span><span>${phone}</span></div>
+    <div class="summary-row"><span>วันรับ</span><span>${date}</span></div>
+    ${document.getElementById('card-message').value ? `<div class="summary-row"><span>การ์ด</span><span style="text-align:right;max-width:60%;font-style:italic">"${document.getElementById('card-message').value}"</span></div>` : ''}
+  `
+
+  showPage('summary')
+}
+
+// ── SUBMIT ORDER ──
+async function submitOrder() {
+  const discount = getDiscount()
+  const finalPrice = selectedProduct['ราคา'] - discount
+
+  const orderData = {
+    type: 'order',
+    line_user_id: currentUser.userId,
+    name: currentUser.displayName,
+    product: selectedProduct['ชื่อสินค้า'],
+    price: finalPrice,
+    original_price: selectedProduct['ราคา'],
+    discount: discount,
+    address: document.getElementById('address').value,
+    phone: document.getElementById('phone').value,
+    delivery_date: document.getElementById('delivery-date').value,
+    card_message: document.getElementById('card-message').value || ''
+  }
+
+  try {
+    // ส่งเข้า LINE chat ก่อน
+    await liff.sendMessages([{
+      type: 'text',
+      text: `🌸 ออเดอร์ใหม่จาก Ori\n\n` +
+        `👤 ${orderData.name}\n` +
+        `📦 ${orderData.product}\n` +
+        `💰 ฿ ${orderData.price.toLocaleString()}${discount > 0 ? ` (ลด ${discount} ฿)` : ''}\n` +
+        `📍 ${orderData.address}\n` +
+        `☎️ ${orderData.phone}\n` +
+        `📅 รับวันที่ ${orderData.delivery_date}\n` +
+        `${orderData.card_message ? `💌 "${orderData.card_message}"\n` : ''}\n` +
+        `paper blooms, real feelings. 🌸`
+    }])
+
+    // บันทึกลง Google Sheets
+    await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify(orderData)
+    })
+
+    // แสดงหน้า success
+    document.getElementById('page-summary').innerHTML = `
+      <div style="text-align:center;padding:60px 20px">
+        <div style="font-size:60px;margin-bottom:16px">🌸</div>
+        <div style="font-size:22px;font-weight:700;color:#0A2A3A;margin-bottom:8px">เย้! ออเดอร์มาแล้วค่ะ!</div>
+        <div style="font-size:13px;color:#6B3A2A;font-style:italic;margin-bottom:24px">"โทริจะพับดอกไม้ให้ด้วยใจเลยนะคะ~"</div>
+        <button class="btn-primary" onclick="showPage('home')">กลับหน้าแรก</button>
+      </div>
+    `
+
+  } catch(e) {
+    alert('เกิดข้อผิดพลาดนะคะ ลองใหม่อีกทีได้เลยค่ะ~')
+    console.log(e)
+  }
+}
+
+// ── NAVIGATION ──
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'))
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'))
+  document.getElementById(`page-${name}`).classList.add('active')
+  const navEl = document.getElementById(`nav-${name}`)
+  if (navEl) navEl.classList.add('active')
+  window.scrollTo(0, 0)
+}
+
+// ── START ──
+init()
+</script>
+</body>
+</html>
