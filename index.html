@@ -532,7 +532,6 @@ function goToSummary() {
       // 1) บันทึกลง Google Sheets ก่อน (ขั้นนี้ต้องผ่าน)
       const res = await fetch(APPS_SCRIPT_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(orderData)
       })
 
