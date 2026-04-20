@@ -6,6 +6,8 @@
   <title>Ori — paper blooms</title>
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@300;400;500;600;700&display=swap');
+
     :root {
       --blue: #A8CEDE;
       --sky: #C8E4F0;
@@ -24,8 +26,7 @@
       margin: 0 auto;
       min-height: 100vh;
     }
-    @import url('https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@300;400;500;600;700&display=swap');
-
+    
     /* PAGES */
     .page { display: none; padding-bottom: 80px; }
     .page.active { display: block; }
@@ -387,7 +388,7 @@ function updatePointsUI() {
     <div style="background:#EEF7FF;border-radius:12px;padding:12px 14px;font-size:12px;color:#0A2A3A">
       <div style="font-weight:600;margin-bottom:6px">วิธีสะสมกลีบ</div>
       <div>ทุก 100 ฿ = 1 กลีบ</div>
-      <div style="margin-top:4px;color:#4A8AAA">🎂 誕生月: +3 กลีบฟรี</div>
+      <div style="margin-top:4px;color:#4A8AAA">🎂 เดือนเกิด: +3 กลีบฟรี</div>
       <div style="margin-top:4px;color:#888;font-size:11px">กลีบหมดอายุ 31 ธ.ค. ของทุกปี</div>
     </div>
   `
