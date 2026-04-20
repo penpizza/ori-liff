@@ -489,47 +489,94 @@ function goToSummary() {
 }
 
 // ── SUBMIT ORDER ──
-async function submitOrder() {
-  const discount = getDiscount()
-  const finalPrice = selectedProduct['ราคา'] - discount
+  async function submitOrder() {
+    if (!selectedProduct) {
+      alert('กรุณาเลือกสินค้าก่อนนะคะ~')
+      showPage('catalog')
+      return
+    }
 
-  const orderData = {
-    type: 'order',
-    line_user_id: currentUser.userId,
-    name: currentUser.displayName,
-    product: selectedProduct['ชื่อสินค้า'],
-    price: finalPrice,
-    original_price: selectedProduct['ราคา'],
-    discount: discount,
-    address: document.getElementById('address').value,
-    phone: document.getElementById('phone').value,
-    delivery_date: document.getElementById('delivery-date').value,
-    card_message: document.getElementById('card-message').value || ''
-  }
+    const submitBtn = document.querySelector('#page-summary .btn-primary')
+    if (submitBtn?.disabled) return
 
-  try {
-    // ส่งเข้า LINE chat ก่อน
-    await liff.sendMessages([{
-      type: 'text',
-      text: `🌸 ออเดอร์ใหม่จาก Ori\n\n` +
-        `👤 ${orderData.name}\n` +
-        `📦 ${orderData.product}\n` +
-        `💰 ฿ ${orderData.price.toLocaleString()}${discount > 0 ? ` (ลด ${discount} ฿)` : ''}\n` +
-        `📍 ${orderData.address}\n` +
-        `☎️ ${orderData.phone}\n` +
-        `📅 รับวันที่ ${orderData.delivery_date}\n` +
-        `${orderData.card_message ? `💌 "${orderData.card_message}"\n` : ''}\n` +
-        `paper blooms, real feelings. 🌸`
-    }])
+    const discount = getDiscount()
+    const finalPrice = selectedProduct['ราคา'] - discount
 
-    // บันทึกลง Google Sheets
-    await fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      body: JSON.stringify(orderData)
-    })
+    const orderData = {
+      type: 'order',
+      line_user_id: currentUser?.userId || '',
+      name: currentUser?.displayName || '',
+      product: selectedProduct['ชื่อสินค้า'],
+      price: finalPrice,
+      original_price: selectedProduct['ราคา'],
+      discount: discount,
+      address: document.getElementById('address').value.trim(),
+      phone: document.getElementById('phone').value.trim(),
+      delivery_date: document.getElementById('delivery-date').value,
+      card_message: document.getElementById('card-message').value.trim()
+    }
 
-    // แสดงหน้า success
-    document.getElementById('page-summary').innerHTML = `
+    if (!orderData.address || !orderData.phone || !orderData.delivery_date) {
+      alert('กรุณากรอกข้อมูลให้ครบนะคะ~')
+      showPage('order')
+      return
+    }
+
+    try {
+      if (submitBtn) {
+        submitBtn.disabled = true
+        submitBtn.style.opacity = '0.7'
+        submitBtn.textContent = 'กำลังส่งออเดอร์...'
+      }
+
+      // 1) บันทึกลง Google Sheets ก่อน
+      const res = await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(orderData)
+      })
+
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok || data.ok === false) {
+        throw new Error(data.error || 'บันทึกข้อมูลไม่สำเร็จ')
+      }
+
+      // 2) ส่งสรุปเข้าแชท LINE (LIFF) แบบ Flex
+      await liff.sendMessages([{
+        type: 'flex',
+        altText: 'สรุปออเดอร์จาก Ori',
+        contents: {
+          type: 'bubble',
+          body: {
+            type: 'box',
+            layout: 'vertical',
+            spacing: 'sm',
+            contents: [
+              { type: 'text', text: 'รับออเดอร์แล้วค่ะ 🌸', weight: 'bold', size: 'lg' },
+              { type: 'text', text: `คุณ ${orderData.name}`, size: 'sm', color: '#666666', margin: 'md' },
+              { type: 'separator', margin: 'md' },
+
+              { type: 'text', text: `สินค้า: ${orderData.product}`, wrap: true, margin: 'md' },
+              { type: 'text', text: `ราคาเดิม: ฿ ${Number(orderData.original_price).toLocaleString()}`, size: 'sm', color: '#666666' },
+              ...(orderData.discount > 0
+                ? [{ type: 'text', text: `ส่วนลด: -฿ ${Number(orderData.discount).toLocaleString()}`, size: 'sm', color: '#2E7D32' }]
+                : []),
+              { type: 'text', text: `ยอดรวม: ฿ ${Number(orderData.price).toLocaleString()}`, weight: 'bold', size: 'md' },
+
+              { type: 'separator', margin: 'md' },
+              { type: 'text', text: `วันรับ: ${orderData.delivery_date}`, margin: 'md' },
+              { type: 'text', text: `เบอร์: ${orderData.phone}` },
+              { type: 'text', text: `ที่อยู่: ${orderData.address}`, wrap: true },
+              { type: 'text', text: `การ์ด: ${orderData.card_message ? `"${orderData.card_message}"` : '-'}`, wrap: true },
+
+              { type: 'text', text: 'paper blooms, real feelings.', size: 'xs', color: '#999999', margin: 'lg' }
+            ]
+          }
+        }
+      }])
+
+      // 3) success page
+      document.getElementById('page-summary').innerHTML = `
       <div style="text-align:center;padding:60px 20px">
         <div style="font-size:60px;margin-bottom:16px">🌸</div>
         <div style="font-size:22px;font-weight:700;color:#0A2A3A;margin-bottom:8px">เย้! ออเดอร์มาแล้วค่ะ!</div>
@@ -538,11 +585,16 @@ async function submitOrder() {
       </div>
     `
 
-  } catch(e) {
-    alert('เกิดข้อผิดพลาดนะคะ ลองใหม่อีกทีได้เลยค่ะ~')
-    console.log(e)
+    } catch (e) {
+      alert('เกิดข้อผิดพลาดนะคะ ลองใหม่อีกทีได้เลยค่ะ~')
+      console.log('submit order error:', e)
+      if (submitBtn) {
+        submitBtn.disabled = false
+        submitBtn.style.opacity = '1'
+        submitBtn.textContent = 'ยืนยันและส่งออเดอร์'
+      }
+    }
   }
-}
 
 // ── NAVIGATION ──
 function showPage(name) {
