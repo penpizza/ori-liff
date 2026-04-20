@@ -497,23 +497,23 @@ function goToSummary() {
     }
 
     const submitBtn = document.querySelector('#page-summary .btn-primary')
-    if (submitBtn?.disabled) return
+    if (submitBtn && submitBtn.disabled) return
 
     const discount = getDiscount()
-    const finalPrice = selectedProduct['ราคา'] - discount
+    const finalPrice = Number(selectedProduct['ราคา']) - discount
 
     const orderData = {
       type: 'order',
-      line_user_id: currentUser?.userId || '',
-      name: currentUser?.displayName || '',
+      line_user_id: (currentUser && currentUser.userId) ? currentUser.userId : '',
+      name: (currentUser && currentUser.displayName) ? currentUser.displayName : '',
       product: selectedProduct['ชื่อสินค้า'],
       price: finalPrice,
-      original_price: selectedProduct['ราคา'],
+      original_price: Number(selectedProduct['ราคา']),
       discount: discount,
-      address: document.getElementById('address').value.trim(),
-      phone: document.getElementById('phone').value.trim(),
+      address: (document.getElementById('address').value || '').trim(),
+      phone: (document.getElementById('phone').value || '').trim(),
       delivery_date: document.getElementById('delivery-date').value,
-      card_message: document.getElementById('card-message').value.trim()
+      card_message: (document.getElementById('card-message').value || '').trim()
     }
 
     if (!orderData.address || !orderData.phone || !orderData.delivery_date) {
@@ -529,65 +529,87 @@ function goToSummary() {
         submitBtn.textContent = 'กำลังส่งออเดอร์...'
       }
 
-      // 1) บันทึกลง Google Sheets ก่อน
+      // 1) บันทึกลง Google Sheets ก่อน (ขั้นนี้ต้องผ่าน)
       const res = await fetch(APPS_SCRIPT_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(orderData)
       })
 
-      const data = await res.json().catch(() => ({}))
-      if (!res.ok || data.ok === false) {
-        throw new Error(data.error || 'บันทึกข้อมูลไม่สำเร็จ')
+      const raw = await res.text()
+      let data = {}
+      try {
+        data = raw ? JSON.parse(raw) : {}
+      } catch (_) {
+        data = {}
       }
 
-      // 2) ส่งสรุปเข้าแชท LINE (LIFF) แบบ Flex
-      await liff.sendMessages([{
-        type: 'flex',
-        altText: 'สรุปออเดอร์จาก Ori',
-        contents: {
-          type: 'bubble',
-          body: {
-            type: 'box',
-            layout: 'vertical',
-            spacing: 'sm',
-            contents: [
-              { type: 'text', text: 'รับออเดอร์แล้วค่ะ 🌸', weight: 'bold', size: 'lg' },
-              { type: 'text', text: `คุณ ${orderData.name}`, size: 'sm', color: '#666666', margin: 'md' },
-              { type: 'separator', margin: 'md' },
+      if (!res.ok || data.ok === false) {
+        throw new Error('save_failed: ' + (data.error || raw || String(res.status)))
+      }
 
-              { type: 'text', text: `สินค้า: ${orderData.product}`, wrap: true, margin: 'md' },
-              { type: 'text', text: `ราคาเดิม: ฿ ${Number(orderData.original_price).toLocaleString()}`, size: 'sm', color: '#666666' },
-              ...(orderData.discount > 0
-                ? [{ type: 'text', text: `ส่วนลด: -฿ ${Number(orderData.discount).toLocaleString()}`, size: 'sm', color: '#2E7D32' }]
-                : []),
-              { type: 'text', text: `ยอดรวม: ฿ ${Number(orderData.price).toLocaleString()}`, weight: 'bold', size: 'md' },
+      // 2) พยายามส่ง Flex เข้าแชท (ถ้าล้ม ไม่ให้ล้มทั้งออเดอร์)
+      let chatWarn = ''
+      try {
+        if (liff.isInClient()) {
+          await liff.sendMessages([{
+            type: 'flex',
+            altText: 'สรุปออเดอร์จาก Ori',
+            contents: {
+              type: 'bubble',
+              body: {
+                type: 'box',
+                layout: 'vertical',
+                spacing: 'sm',
+                contents: [
+                  { type: 'text', text: 'รับออเดอร์แล้วค่ะ 🌸', weight: 'bold', size: 'lg' },
+                  { type: 'text', text: 'คุณ ' + orderData.name, size: 'sm', color: '#666666', margin: 'md' },
+                  { type: 'separator', margin: 'md' },
 
-              { type: 'separator', margin: 'md' },
-              { type: 'text', text: `วันรับ: ${orderData.delivery_date}`, margin: 'md' },
-              { type: 'text', text: `เบอร์: ${orderData.phone}` },
-              { type: 'text', text: `ที่อยู่: ${orderData.address}`, wrap: true },
-              { type: 'text', text: `การ์ด: ${orderData.card_message ? `"${orderData.card_message}"` : '-'}`, wrap: true },
+                  { type: 'text', text: 'สินค้า: ' + orderData.product, wrap: true, margin: 'md' },
+                  { type: 'text', text: 'ราคาเดิม: ฿ ' + Number(orderData.original_price).toLocaleString(), size: 'sm', color: '#666666' },
 
-              { type: 'text', text: 'paper blooms, real feelings.', size: 'xs', color: '#999999', margin: 'lg' }
-            ]
-          }
+                  ...(orderData.discount > 0
+                    ? [{ type: 'text', text: 'ส่วนลด: -฿ ' + Number(orderData.discount).toLocaleString(), size: 'sm', color: '#2E7D32' }]
+                    : []),
+
+                  { type: 'text', text: 'ยอดรวม: ฿ ' + Number(orderData.price).toLocaleString(), weight: 'bold', size: 'md' },
+
+                  { type: 'separator', margin: 'md' },
+                  { type: 'text', text: 'วันรับ: ' + orderData.delivery_date, margin: 'md' },
+                  { type: 'text', text: 'เบอร์: ' + orderData.phone },
+                  { type: 'text', text: 'ที่อยู่: ' + orderData.address, wrap: true },
+                  { type: 'text', text: 'การ์ด: ' + (orderData.card_message ? '"' + orderData.card_message + '"' : '-'), wrap: true },
+
+                  { type: 'text', text: 'paper blooms, real feelings.', size: 'xs', color: '#999999', margin: 'lg' }
+                ]
+              }
+            }
+          }])
+        } else {
+          chatWarn = 'บันทึกออเดอร์แล้ว แต่ส่งข้อความแชทไม่ได้ เพราะไม่ได้เปิดใน LINE client'
         }
-      }])
+      } catch (msgErr) {
+        console.warn('sendMessages failed:', msgErr)
+        chatWarn = 'บันทึกออเดอร์แล้ว แต่ส่งข้อความสรุปเข้าแชทไม่สำเร็จ'
+      }
 
       // 3) success page
-      document.getElementById('page-summary').innerHTML = `
-      <div style="text-align:center;padding:60px 20px">
-        <div style="font-size:60px;margin-bottom:16px">🌸</div>
-        <div style="font-size:22px;font-weight:700;color:#0A2A3A;margin-bottom:8px">เย้! ออเดอร์มาแล้วค่ะ!</div>
-        <div style="font-size:13px;color:#6B3A2A;font-style:italic;margin-bottom:24px">"โทริจะพับดอกไม้ให้ด้วยใจเลยนะคะ~"</div>
-        <button class="btn-primary" onclick="showPage('home')">กลับหน้าแรก</button>
-      </div>
-    `
+      document.getElementById('page-summary').innerHTML =
+        '<div style="text-align:center;padding:60px 20px">' +
+        '<div style="font-size:60px;margin-bottom:16px">🌸</div>' +
+        '<div style="font-size:22px;font-weight:700;color:#0A2A3A;margin-bottom:8px">เย้! ออเดอร์มาแล้วค่ะ!</div>' +
+        '<div style="font-size:13px;color:#6B3A2A;font-style:italic;margin-bottom:24px">"โทริจะพับดอกไม้ให้ด้วยใจเลยนะคะ~"</div>' +
+        (chatWarn
+          ? '<div style="font-size:12px;color:#8B6A52;margin-bottom:14px">' + chatWarn + '</div>'
+          : '') +
+        '<button class="btn-primary" onclick="showPage(\'home\')">กลับหน้าแรก</button>' +
+        '</div>'
 
     } catch (e) {
-      alert('เกิดข้อผิดพลาดนะคะ ลองใหม่อีกทีได้เลยค่ะ~')
       console.log('submit order error:', e)
+      alert('ส่งออเดอร์ไม่สำเร็จ: ' + (e && e.message ? e.message : e))
+
       if (submitBtn) {
         submitBtn.disabled = false
         submitBtn.style.opacity = '1'
