@@ -478,6 +478,67 @@
       margin-top: 8px;
       font-style: italic;
       min-height: 18px;
+
+      /* POINTS PROFILE LAYOUT */
+.points-profile-card {
+  background: #66b9e6;
+  border-radius: 16px;
+  padding: 18px 16px;
+  text-align: center;
+  color: #0A2A3A;
+}
+
+.points-avatar {
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  background: #E24D9C;
+  margin: 0 auto 12px;
+}
+
+.points-name {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.points-birth-row {
+  margin-top: 6px;
+  font-size: 14px;
+}
+
+.points-edit-link {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 12px;
+  color: #0A2A3A;
+  border-bottom: 1px solid rgba(10,42,58,.4);
+  cursor: pointer;
+}
+
+.points-panel {
+  background: #66b9e6;
+  border-radius: 16px;
+  padding: 18px 16px;
+  color: #0A2A3A;
+}
+
+.points-panel-title {
+  font-size: 36px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.points-panel-line {
+  font-size: 15px;
+  margin-top: 4px;
+}
+
+.birth-empty {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #6B3A2A;
+}
     }
   </style>
 </head>
@@ -725,53 +786,63 @@
   }
 
   function updatePointsUI() {
-    const tierMax = { bud: 10, bloom: 30, blossom: 99 }
-    const progress = Math.min((userPoints / (tierMax[userTier] || 10)) * 100, 100)
+      const tierMax = { bud: 10, bloom: 30, blossom: 99 }
+      const progress = Math.min((userPoints / (tierMax[userTier] || 10)) * 100, 100)
 
-    document.getElementById('points-title').textContent = 'Petal Points — ' + userPoints + ' กลีบ'
-    document.getElementById('points-bar').style.width = progress + '%'
+      document.getElementById('points-title').textContent = 'Petal Points — ' + userPoints + ' กลีบ'
+      document.getElementById('points-bar').style.width = progress + '%'
 
-    if (userTier === 'bloom') {
-      document.getElementById('points-sub').textContent = 'อีก ' + Math.max(0, 30 - userPoints) + ' กลีบ → Blossom'
-    } else if (userTier === 'bud') {
-      document.getElementById('points-sub').textContent = 'อีก ' + Math.max(0, 10 - userPoints) + ' กลีบ → Bloom'
-    } else {
-      document.getElementById('points-sub').textContent = 'Blossom tier — ขอบคุณมากนะคะ~'
+      if (userTier === 'bloom') {
+        document.getElementById('points-sub').textContent = 'อีก ' + Math.max(0, 30 - userPoints) + ' กลีบ → Blossom'
+      } else if (userTier === 'bud') {
+        document.getElementById('points-sub').textContent = 'อีก ' + Math.max(0, 10 - userPoints) + ' กลีบ → Bloom'
+      } else {
+        document.getElementById('points-sub').textContent = 'Blossom tier — ขอบคุณมากนะคะ~'
+      }
+
+      const tierName = { bud: 'Bud', bloom: 'Bloom', blossom: 'Blossom' }
+      const discount = { bud: 0, bloom: 5, blossom: 10 }
+
+      const now = new Date()
+      const defaultExpire = '31/12/' + now.getFullYear()
+
+      const birthMonthLabel = userMeta.birth_month ? ('เดือน ' + userMeta.birth_month) : 'ยังไม่ได้ระบุ'
+      const joinDateLabel = userMeta.join_date ? userMeta.join_date : '-'
+      const expireLabel = userMeta.expire_points ? userMeta.expire_points : defaultExpire
+      const nameLabel = userMeta.name || (currentUser && currentUser.displayName) || 'Profile'
+
+      const birthEmptyNote = userMeta.birth_month
+        ? ''
+        : '<div class="birth-empty">ยังไม่เคยกรอกเดือนเกิด กรุณากดแก้ไขด้านบนค่ะ</div>'
+
+      document.getElementById('points-detail').innerHTML =
+        '<div class="points-profile-card">' +
+        '<div class="points-avatar"></div>' +
+        '<div class="points-name">' + escapeHtml(nameLabel) + '</div>' +
+        '<div class="points-birth-row">เดือนเกิด: ' + escapeHtml(birthMonthLabel) + '</div>' +
+        '<div class="points-edit-link" onclick="openBirthMonthEditor()">แก้ไขเดือนเกิด</div>' +
+        birthEmptyNote +
+        '</div>' +
+
+        '<div style="height:10px"></div>' +
+
+        '<div class="points-panel">' +
+        '<div class="points-panel-title">' + userPoints + '</div>' +
+        '<div class="points-panel-line">Tier: ' + escapeHtml(tierName[userTier] || 'Bud') + '</div>' +
+        '<div class="points-panel-line">ส่วนลด: ' + discount[userTier] + '%</div>' +
+        '<div class="points-panel-line">กลีบหมดอายุ: ' + escapeHtml(expireLabel) + '</div>' +
+        '<div class="points-panel-line">วันที่สมัคร: ' + escapeHtml(joinDateLabel) + '</div>' +
+        '</div>' +
+
+        '<div style="height:10px"></div>' +
+
+        '<div class="points-panel">' +
+        '<div style="font-size:22px;font-weight:700;">เงื่อนไขการได้แต้ม</div>' +
+        '<div class="points-panel-line">ทุก 100 บาท = 1 กลีบ</div>' +
+        '<div class="points-panel-line">เดือนเกิดรับเพิ่ม 3 กลีบ</div>' +
+        '<div class="points-panel-line">แต้มหมดอายุทุกวันที่ 31 ธ.ค.</div>' +
+        '</div>'
     }
-
-    const tierName = { bud: 'Bud 🌱', bloom: 'Bloom 🌸', blossom: 'Blossom 🌺' }
-    const discount = { bud: 0, bloom: 5, blossom: 10 }
-
-    const now = new Date()
-    const defaultExpire = '31/12/' + now.getFullYear()
-
-    const birthMonthLabel = userMeta.birth_month ? userMeta.birth_month : 'ยังไม่ได้ระบุ'
-    const joinDateLabel = userMeta.join_date ? userMeta.join_date : '-'
-    const expireLabel = userMeta.expire_points ? userMeta.expire_points : defaultExpire
-
-    const profileRows =
-      '<div style="margin-top:10px;padding-top:10px;border-top:0.5px solid #E8D4C0;font-size:11px;color:#6B3A2A;line-height:1.7">' +
-      '<div>ชื่อ: ' + escapeHtml(userMeta.name || '-') + '</div>' +
-      '<div>กลีบหมดอายุ: ' + escapeHtml(expireLabel) + '</div>' +
-      '<div>เดือนเกิด: ' + escapeHtml(birthMonthLabel) + '</div>' +
-      '<div>วันที่สมัคร: ' + escapeHtml(joinDateLabel) + '</div>' +
-      '</div>'
-
-    document.getElementById('points-detail').innerHTML =
-      '<div style="background:white;border-radius:14px;border:0.5px solid #E8D4C0;padding:16px;margin-bottom:12px">' +
-      '<div style="font-size:11px;color:#8B6A52;margin-bottom:4px">tier ปัจจุบัน</div>' +
-      '<div style="font-size:22px;font-weight:700;color:#0A2A3A">' + tierName[userTier] + '</div>' +
-      '<div style="font-size:13px;color:#6B3A2A;margin-top:4px">' + userPoints + ' กลีบสะสม</div>' +
-      (discount[userTier] > 0 ? '<div style="font-size:11px;color:#8FBF8F;margin-top:4px">ส่วนลด ' + discount[userTier] + '% ทุกออเดอร์</div>' : '') +
-      profileRows +
-      '</div>' +
-      '<div style="background:#EEF7FF;border-radius:12px;padding:12px 14px;font-size:12px;color:#0A2A3A">' +
-      '<div style="font-weight:600;margin-bottom:6px">วิธีสะสมกลีบ</div>' +
-      '<div>ทุก 100 ฿ = 1 กลีบ</div>' +
-      '<div style="margin-top:4px;color:#4A8AAA">🎂 เดือนเกิด: +3 กลีบฟรี</div>' +
-      '<div style="margin-top:4px;color:#888;font-size:11px">กลีบหมดอายุ 31 ธ.ค. ของทุกปี</div>' +
-      '</div>'
-  }
   
     // ── CATALOG ──
     async function loadCatalog() {
@@ -995,6 +1066,25 @@
           return false
         }
       }
+      async function openBirthMonthEditor() {
+          const month = prompt('กรอกเดือนเกิด (1-12)', userMeta.birth_month || '')
+          if (!month) return
+
+          const m = Number(month)
+          if (!Number.isInteger(m) || m < 1 || m > 12) {
+            alert('เดือนเกิดต้องเป็นตัวเลข 1-12')
+            return
+          }
+
+          const ok = await saveBirthMonth(String(m))
+          if (!ok) {
+            alert('บันทึกเดือนเกิดไม่สำเร็จ ลองอีกครั้งนะคะ')
+            return
+          }
+
+          userMeta.birth_month = String(m)
+          updatePointsUI()
+        }
     // ── SUMMARY ──
     function goToSummary() {
       const address = document.getElementById('address').value
