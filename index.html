@@ -673,17 +673,23 @@
 
     // ── INIT ──
     async function init() {
-      await liff.init({ liffId: LIFF_ID })
-      if (!liff.isLoggedIn()) { liff.login(); return }
+        await liff.init({ liffId: LIFF_ID })
+        if (!liff.isLoggedIn()) { liff.login(); return }
 
-      const profile = await liff.getProfile()
-      currentUser = profile
+        const profile = await liff.getProfile()
+        currentUser = profile
 
-      const avatar = document.getElementById('user-avatar')
-      avatar.innerHTML = '<img src="' + escapeHtml(profile.pictureUrl || '') + '" style="width:100%;height:100%;object-fit:cover">'
+        const avatar = document.getElementById('user-avatar')
+        avatar.innerHTML = '<img src="' + escapeHtml(profile.pictureUrl || '') + '" style="width:100%;height:100%;object-fit:cover">'
 
-      await Promise.all([loadUserData(), loadCatalog()])
-    }
+        bindProductTapDelegation()
+
+        await Promise.all([loadUserData(), loadCatalog()])
+
+        if (selectedProduct && document.getElementById('page-order').classList.contains('active')) {
+          initCalendar()
+        }
+      }
 
     // ── USER DATA ──
     async function loadUserData() {
@@ -757,20 +763,20 @@
       }
     }
 
-    function renderProductCard(p) {
-      const imageUrl = getProductImageUrl(p)
-      const imageHtml = imageUrl
-        ? '<img src="' + escapeHtml(imageUrl) + '" alt="' + escapeHtml(p['ชื่อสินค้า'] || 'product') + '" loading="lazy" decoding="async">'
-        : '🌸'
-      const idArg = String(p['product_id'] || '').replace(/'/g, "\\'")
-      return '<div class="product-card" onclick="selectProduct(\'' + idArg + '\')">' +
-        '<div class="product-img">' + imageHtml + '</div>' +
-        '<div class="product-info">' +
-        '<div class="product-name">' + escapeHtml(p['ชื่อสินค้า'] || '-') + '</div>' +
-        '<div class="product-desc">' + escapeHtml(p['รายละเอียด'] || '') + '</div>' +
-        '<div class="product-price">฿ ' + Number(p['ราคา'] || 0).toLocaleString() + '</div>' +
-        '</div></div>'
-    }
+  function renderProductCard(p) {
+    const imageUrl = getProductImageUrl(p)
+    const imageHtml = imageUrl
+      ? '<img src="' + escapeHtml(imageUrl) + '" alt="' + escapeHtml(p['ชื่อสินค้า'] || 'product') + '" loading="lazy" decoding="async">'
+      : '🌸'
+    const idArg = String(p['product_id'] || '').replace(/"/g, '"')
+    return '<div class="product-card" data-product-id="' + idArg + '">' +
+      '<div class="product-img">' + imageHtml + '</div>' +
+      '<div class="product-info">' +
+      '<div class="product-name">' + escapeHtml(p['ชื่อสินค้า'] || '-') + '</div>' +
+      '<div class="product-desc">' + escapeHtml(p['รายละเอียด'] || '') + '</div>' +
+      '<div class="product-price">฿ ' + Number(p['ราคา'] || 0).toLocaleString() + '</div>' +
+      '</div></div>'
+  }
 
     function renderProducts() {
       const active = catalog.filter(function (p) {
@@ -1028,16 +1034,43 @@
         if (submitBtn) { submitBtn.disabled = false; submitBtn.style.opacity = '1'; submitBtn.textContent = 'ยืนยันและส่งออเดอร์' }
       }
     }
+    function bindProductTapDelegation() {
+        ;['featured-products', 'all-products'].forEach(function (containerId) {
+          const el = document.getElementById(containerId)
+          if (!el) return
+          if (el.dataset.bound === '1') return
+          el.dataset.bound = '1'
+
+          const onTap = function (evt) {
+            const card = evt.target.closest('.product-card')
+            if (!card) return
+            const pid = card.getAttribute('data-product-id')
+            if (!pid) return
+            selectProduct(pid)
+          }
+
+          el.addEventListener('click', onTap)
+          el.addEventListener('touchend', onTap, { passive: true })
+        })
+      }
 
     // ── NAVIGATION ──
-    function showPage(name) {
-      document.querySelectorAll('.page').forEach(function (p) { p.classList.remove('active') })
-      document.querySelectorAll('.nav-item').forEach(function (n) { n.classList.remove('active') })
-      document.getElementById('page-' + name).classList.add('active')
-      const navEl = document.getElementById('nav-' + name)
-      if (navEl) navEl.classList.add('active')
-      window.scrollTo(0, 0)
+  function showPage(name) {
+    document.querySelectorAll('.page').forEach(function (p) { p.classList.remove('active') })
+    document.querySelectorAll('.nav-item').forEach(function (n) { n.classList.remove('active') })
+    document.getElementById('page-' + name).classList.add('active')
+    const navEl = document.getElementById('nav-' + name)
+    if (navEl) navEl.classList.add('active')
+
+    if (name === 'order' && selectedProduct) {
+      const wrap = document.getElementById('calendar-wrap')
+      if (wrap && !wrap.innerHTML.trim()) {
+        initCalendar()
+      }
     }
+
+    window.scrollTo(0, 0)
+  }
 
     init()
   </script>
