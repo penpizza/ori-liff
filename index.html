@@ -108,7 +108,12 @@
     .product-name { font-size: 13px; font-weight: 600; color: var(--dark); }
     .product-desc { font-size: 10px; color: #8B6A52; font-weight: 300; margin-top: 2px; }
     .product-price { font-size: 14px; font-weight: 700; color: var(--dark); margin-top: 6px; }
-
+    .product-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        }
     /* POINTS CARD */
     .points-card {
       background: var(--dark); border-radius: 14px;
@@ -316,179 +321,231 @@
 </div>
 
 <script>
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyJvYn3YIDkS_kffBLGTY4aY7Pp5HPe2eP1ruuxxSHHpzqdVTtuMdcrW9o583vTXkY/exec'
-const LIFF_ID = '2009801886-j4H29HTq'
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyJvYn3YIDkS_kffBLGTY4aY7Pp5HPe2eP1ruuxxSHHpzqdVTtuMdcrW9o583vTXkY/exec'
+  const LIFF_ID = '2009801886-j4H29HTq'
 
-let currentUser = null
-let userPoints = 0
-let userTier = 'bud'
-let selectedProduct = null
-let catalog = []
+  const CATALOG_CACHE_KEY = 'ori_catalog_cache_v1'
+  const CATALOG_CACHE_TTL_MS = 60 * 1000
+  const FALLBACK_CATALOG = [
+    { product_id: '1', ชื่อสินค้า: 'ช่อ 5 กลีบ', ราคา: 290, รายละเอียด: 'พับด้วยมือ · 2-3 วัน', สถานะ: 'active', image_url: '', image_thumb_url: '' },
+    { product_id: '2', ชื่อสินค้า: 'ช่อ Butter', ราคา: 350, รายละเอียด: 'edition พิเศษ · 3-4 วัน', สถานะ: 'active', image_url: '', image_thumb_url: '' }
+  ]
 
-// ── INIT ──
-async function init() {
-  await liff.init({ liffId: LIFF_ID })
-  if (!liff.isLoggedIn()) {
-    liff.login()
-    return
+  let currentUser = null
+  let userPoints = 0
+  let userTier = 'bud'
+  let selectedProduct = null
+  let catalog = []
+
+  function escapeHtml(value) {
+    return String(value || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;')
   }
 
-  const profile = await liff.getProfile()
-  currentUser = profile
-
-  // แสดง avatar
-  const avatar = document.getElementById('user-avatar')
-  avatar.innerHTML = `<img src="${profile.pictureUrl}" style="width:100%;height:100%;object-fit:cover">`
-
-  // ดึง user data
-  await loadUserData()
-  await loadCatalog()
-}
-
-// ── LOAD USER DATA ──
-async function loadUserData() {
-  try {
-    const res = await fetch(`${APPS_SCRIPT_URL}?type=user&line_user_id=${currentUser.userId}`)
-    const data = await res.json()
-    userPoints = data.points || 0
-    userTier = data.tier || 'bud'
-    updatePointsUI()
-  } catch(e) {
-    console.log('load user error', e)
-  }
-}
-
-function updatePointsUI() {
-  const tierEmoji = { bud: '🌱', bloom: '🌸', blossom: '🌺' }
-  const tierMax = { bud: 10, bloom: 30, blossom: 99 }
-  const progress = Math.min((userPoints / tierMax[userTier]) * 100, 100)
-
-  document.getElementById('points-title').textContent =
-    `Petal Points — ${userPoints} กลีบ`
-  document.getElementById('points-bar').style.width = `${progress}%`
-
-  if (userTier === 'bloom') {
-    document.getElementById('points-sub').textContent = `อีก ${30 - userPoints} กลีบ → Blossom`
-  } else if (userTier === 'bud') {
-    document.getElementById('points-sub').textContent = `อีก ${10 - userPoints} กลีบ → Bloom`
-  } else {
-    document.getElementById('points-sub').textContent = `Blossom tier — ขอบคุณมากนะคะ~`
+  function getProductImageUrl(p) {
+    return String((p && (p.image_thumb_url || p.image_url || p['รูป'])) || '').trim()
   }
 
-  // Points page
-  const tierName = { bud: 'Bud 🌱', bloom: 'Bloom 🌸', blossom: 'Blossom 🌺' }
-  const discount = { bud: 0, bloom: 5, blossom: 10 }
-  document.getElementById('points-detail').innerHTML = `
-    <div style="background:white;border-radius:14px;border:0.5px solid #E8D4C0;padding:16px;margin-bottom:12px">
-      <div style="font-size:11px;color:#8B6A52;margin-bottom:4px">tier ปัจจุบัน</div>
-      <div style="font-size:22px;font-weight:700;color:#0A2A3A">${tierName[userTier]}</div>
-      <div style="font-size:13px;color:#6B3A2A;margin-top:4px">${userPoints} กลีบสะสม</div>
-      ${discount[userTier] > 0 ? `<div style="font-size:11px;color:#8FBF8F;margin-top:4px">ส่วนลด ${discount[userTier]}% ทุกออเดอร์</div>` : ''}
-    </div>
-    <div style="background:#EEF7FF;border-radius:12px;padding:12px 14px;font-size:12px;color:#0A2A3A">
-      <div style="font-weight:600;margin-bottom:6px">วิธีสะสมกลีบ</div>
-      <div>ทุก 100 ฿ = 1 กลีบ</div>
-      <div style="margin-top:4px;color:#4A8AAA">🎂 เดือนเกิด: +3 กลีบฟรี</div>
-      <div style="margin-top:4px;color:#888;font-size:11px">กลีบหมดอายุ 31 ธ.ค. ของทุกปี</div>
-    </div>
-  `
-}
+  async function init() {
+    await liff.init({ liffId: LIFF_ID })
+    if (!liff.isLoggedIn()) {
+      liff.login()
+      return
+    }
 
-// ── LOAD CATALOG ──
-async function loadCatalog() {
-  try {
-    const res = await fetch(`${APPS_SCRIPT_URL}?type=catalog`)
-    catalog = await res.json()
-    renderProducts()
-  } catch(e) {
-    // fallback catalog
-    catalog = [
-      { product_id: '1', ชื่อสินค้า: 'ช่อ 5 กลีบ', ราคา: 290, รายละเอียด: 'พับด้วยมือ · 2-3 วัน', สถานะ: 'active' },
-      { product_id: '2', ชื่อสินค้า: 'ช่อ Butter', ราคา: 350, รายละเอียด: 'edition พิเศษ · 3-4 วัน', สถานะ: 'active' },
-    ]
-    renderProducts()
-  }
-}
+    const profile = await liff.getProfile()
+    currentUser = profile
 
-function renderProducts() {
-  const active = catalog.filter(p => p['สถานะ'] === 'active')
-  const html = active.map(p => `
-    <div class="product-card" onclick="selectProduct(${p['product_id']})">
-      <div class="product-img">🌸</div>
-      <div class="product-info">
-        <div class="product-name">${p['ชื่อสินค้า']}</div>
-        <div class="product-desc">${p['รายละเอียด'] || ''}</div>
-        <div class="product-price">฿ ${Number(p['ราคา']).toLocaleString()}</div>
-      </div>
-    </div>
-  `).join('')
+    const avatar = document.getElementById('user-avatar')
+    avatar.innerHTML = '<img src="' + escapeHtml(profile.pictureUrl || '') + '" style="width:100%;height:100%;object-fit:cover">'
 
-  document.getElementById('featured-products').innerHTML = html
-  document.getElementById('all-products').innerHTML = html
-}
-
-// ── SELECT PRODUCT ──
-function selectProduct(id) {
-  selectedProduct = catalog.find(p => p['product_id'] == id)
-  if (!selectedProduct) return
-
-  // set min date (3 วัน)
-  const minDate = new Date()
-  minDate.setDate(minDate.getDate() + 3)
-  document.getElementById('delivery-date').min = minDate.toISOString().split('T')[0]
-
-  // แสดงสินค้าที่เลือก
-  const discount = getDiscount()
-  const finalPrice = selectedProduct['ราคา'] - discount
-  document.getElementById('selected-product-info').innerHTML = `
-    <div style="font-size:13px;font-weight:600;color:#0A2A3A">${selectedProduct['ชื่อสินค้า']}</div>
-    <div style="font-size:11px;color:#8B6A52;margin-top:2px">${selectedProduct['รายละเอียด'] || ''}</div>
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
-      <div style="font-size:16px;font-weight:700;color:#0A2A3A">฿ ${finalPrice.toLocaleString()}</div>
-      ${discount > 0 ? `<div style="font-size:11px;color:#8FBF8F">ส่วนลด ${getDiscountPercent()}%</div>` : ''}
-    </div>
-  `
-
-  showPage('order')
-}
-
-function getDiscountPercent() {
-  return { bud: 0, bloom: 5, blossom: 10 }[userTier] || 0
-}
-
-function getDiscount() {
-  return Math.floor(selectedProduct['ราคา'] * getDiscountPercent() / 100)
-}
-
-// ── GO TO SUMMARY ──
-function goToSummary() {
-  const address = document.getElementById('address').value
-  const phone = document.getElementById('phone').value
-  const date = document.getElementById('delivery-date').value
-
-  if (!address || !phone || !date) {
-    alert('กรุณากรอกข้อมูลให้ครบนะคะ~')
-    return
+    await Promise.all([
+      loadUserData(),
+      loadCatalog()
+    ])
   }
 
-  const discount = getDiscount()
-  const finalPrice = selectedProduct['ราคา'] - discount
+  async function loadUserData() {
+    try {
+      const res = await fetch(APPS_SCRIPT_URL + '?type=user&line_user_id=' + encodeURIComponent(currentUser.userId))
+      const data = await res.json()
+      userPoints = data.points || 0
+      userTier = data.tier || 'bud'
+      updatePointsUI()
+    } catch (e) {
+      console.log('load user error', e)
+    }
+  }
 
-  document.getElementById('summary-content').innerHTML = `
-    <div class="summary-row"><span>สินค้า</span><span>${selectedProduct['ชื่อสินค้า']}</span></div>
-    <div class="summary-row"><span>ราคา</span><span>฿ ${Number(selectedProduct['ราคา']).toLocaleString()}</span></div>
-    ${discount > 0 ? `<div class="summary-row"><span>ส่วนลด ${getDiscountPercent()}%</span><span style="color:#8FBF8F">-฿ ${discount}</span></div>` : ''}
-    <div class="summary-row"><span style="font-weight:700">ยอดรวม</span><span class="summary-total">฿ ${finalPrice.toLocaleString()}</span></div>
-    <div class="summary-row"><span>ที่อยู่</span><span style="text-align:right;max-width:60%">${address}</span></div>
-    <div class="summary-row"><span>เบอร์</span><span>${phone}</span></div>
-    <div class="summary-row"><span>วันรับ</span><span>${date}</span></div>
-    ${document.getElementById('card-message').value ? `<div class="summary-row"><span>การ์ด</span><span style="text-align:right;max-width:60%;font-style:italic">"${document.getElementById('card-message').value}"</span></div>` : ''}
-  `
+  function updatePointsUI() {
+    const tierMax = { bud: 10, bloom: 30, blossom: 99 }
+    const progress = Math.min((userPoints / (tierMax[userTier] || 10)) * 100, 100)
 
-  showPage('summary')
-}
+    document.getElementById('points-title').textContent = 'Petal Points — ' + userPoints + ' กลีบ'
+    document.getElementById('points-bar').style.width = progress + '%'
 
-// ── SUBMIT ORDER ──
+    if (userTier === 'bloom') {
+      document.getElementById('points-sub').textContent = 'อีก ' + Math.max(0, 30 - userPoints) + ' กลีบ → Blossom'
+    } else if (userTier === 'bud') {
+      document.getElementById('points-sub').textContent = 'อีก ' + Math.max(0, 10 - userPoints) + ' กลีบ → Bloom'
+    } else {
+      document.getElementById('points-sub').textContent = 'Blossom tier — ขอบคุณมากนะคะ~'
+    }
+
+    const tierName = { bud: 'Bud 🌱', bloom: 'Bloom 🌸', blossom: 'Blossom 🌺' }
+    const discount = { bud: 0, bloom: 5, blossom: 10 }
+
+    document.getElementById('points-detail').innerHTML =
+      '<div style="background:white;border-radius:14px;border:0.5px solid #E8D4C0;padding:16px;margin-bottom:12px">' +
+      '<div style="font-size:11px;color:#8B6A52;margin-bottom:4px">tier ปัจจุบัน</div>' +
+      '<div style="font-size:22px;font-weight:700;color:#0A2A3A">' + tierName[userTier] + '</div>' +
+      '<div style="font-size:13px;color:#6B3A2A;margin-top:4px">' + userPoints + ' กลีบสะสม</div>' +
+      (discount[userTier] > 0 ? '<div style="font-size:11px;color:#8FBF8F;margin-top:4px">ส่วนลด ' + discount[userTier] + '% ทุกออเดอร์</div>' : '') +
+      '</div>' +
+      '<div style="background:#EEF7FF;border-radius:12px;padding:12px 14px;font-size:12px;color:#0A2A3A">' +
+      '<div style="font-weight:600;margin-bottom:6px">วิธีสะสมกลีบ</div>' +
+      '<div>ทุก 100 ฿ = 1 กลีบ</div>' +
+      '<div style="margin-top:4px;color:#4A8AAA">🎂 เดือนเกิด: +3 กลีบฟรี</div>' +
+      '<div style="margin-top:4px;color:#888;font-size:11px">กลีบหมดอายุ 31 ธ.ค. ของทุกปี</div>' +
+      '</div>'
+  }
+
+  async function loadCatalog() {
+    const now = Date.now()
+
+    try {
+      const cachedRaw = localStorage.getItem(CATALOG_CACHE_KEY)
+      if (cachedRaw) {
+        const cached = JSON.parse(cachedRaw)
+        if (cached && Array.isArray(cached.data) && (now - Number(cached.ts || 0) < CATALOG_CACHE_TTL_MS)) {
+          catalog = cached.data
+          renderProducts()
+        }
+      }
+    } catch (e) {
+      console.log('catalog cache read error', e)
+    }
+
+    try {
+      const res = await fetch(APPS_SCRIPT_URL + '?type=catalog')
+      const fresh = await res.json()
+
+      if (!Array.isArray(fresh)) {
+        throw new Error('catalog is not array')
+      }
+
+      catalog = fresh
+      renderProducts()
+
+      localStorage.setItem(CATALOG_CACHE_KEY, JSON.stringify({
+        ts: Date.now(),
+        data: fresh
+      }))
+    } catch (e) {
+      console.log('load catalog error', e)
+      if (!catalog.length) {
+        catalog = FALLBACK_CATALOG
+        renderProducts()
+      }
+    }
+  }
+
+  function renderProductCard(p) {
+    const imageUrl = getProductImageUrl(p)
+    const imageHtml = imageUrl
+      ? '<img src="' + escapeHtml(imageUrl) + '" alt="' + escapeHtml(p['ชื่อสินค้า'] || 'product') + '" loading="lazy" decoding="async">'
+      : '🌸'
+
+    const idArg = JSON.stringify(String(p['product_id'] || ''))
+
+    return '' +
+      '<div class="product-card" onclick="selectProduct(' + idArg + ')">' +
+      '<div class="product-img">' + imageHtml + '</div>' +
+      '<div class="product-info">' +
+      '<div class="product-name">' + escapeHtml(p['ชื่อสินค้า'] || '-') + '</div>' +
+      '<div class="product-desc">' + escapeHtml(p['รายละเอียด'] || '') + '</div>' +
+      '<div class="product-price">฿ ' + Number(p['ราคา'] || 0).toLocaleString() + '</div>' +
+      '</div>' +
+      '</div>'
+  }
+
+  function renderProducts() {
+    const active = catalog.filter(function (p) {
+      return String((p && p['สถานะ']) || '').toLowerCase() === 'active'
+    })
+
+    const featured = active.slice(0, 4)
+    const featuredHtml = featured.map(renderProductCard).join('')
+    const allHtml = active.map(renderProductCard).join('')
+
+    document.getElementById('featured-products').innerHTML = featuredHtml || '<div class="loading">ยังไม่มีสินค้านะคะ~</div>'
+    document.getElementById('all-products').innerHTML = allHtml || '<div class="loading">ยังไม่มีสินค้านะคะ~</div>'
+  }
+
+  function selectProduct(id) {
+    selectedProduct = catalog.find(function (p) {
+      return String(p['product_id']) === String(id)
+    })
+    if (!selectedProduct) return
+
+    const minDate = new Date()
+    minDate.setDate(minDate.getDate() + 3)
+    document.getElementById('delivery-date').min = minDate.toISOString().split('T')[0]
+
+    const discount = getDiscount()
+    const finalPrice = Number(selectedProduct['ราคา'] || 0) - discount
+
+    document.getElementById('selected-product-info').innerHTML =
+      '<div style="font-size:13px;font-weight:600;color:#0A2A3A">' + escapeHtml(selectedProduct['ชื่อสินค้า']) + '</div>' +
+      '<div style="font-size:11px;color:#8B6A52;margin-top:2px">' + escapeHtml(selectedProduct['รายละเอียด'] || '') + '</div>' +
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">' +
+      '<div style="font-size:16px;font-weight:700;color:#0A2A3A">฿ ' + finalPrice.toLocaleString() + '</div>' +
+      (discount > 0 ? '<div style="font-size:11px;color:#8FBF8F">ส่วนลด ' + getDiscountPercent() + '%</div>' : '') +
+      '</div>'
+
+    showPage('order')
+  }
+
+  function getDiscountPercent() {
+    return { bud: 0, bloom: 5, blossom: 10 }[userTier] || 0
+  }
+
+  function getDiscount() {
+    if (!selectedProduct) return 0
+    return Math.floor(Number(selectedProduct['ราคา'] || 0) * getDiscountPercent() / 100)
+  }
+
+  function goToSummary() {
+    const address = document.getElementById('address').value
+    const phone = document.getElementById('phone').value
+    const date = document.getElementById('delivery-date').value
+
+    if (!address || !phone || !date) {
+      alert('กรุณากรอกข้อมูลให้ครบนะคะ~')
+      return
+    }
+
+    const discount = getDiscount()
+    const finalPrice = Number(selectedProduct['ราคา'] || 0) - discount
+    const cardMessage = document.getElementById('card-message').value
+
+    document.getElementById('summary-content').innerHTML =
+      '<div class="summary-row"><span>สินค้า</span><span>' + escapeHtml(selectedProduct['ชื่อสินค้า']) + '</span></div>' +
+      '<div class="summary-row"><span>ราคา</span><span>฿ ' + Number(selectedProduct['ราคา'] || 0).toLocaleString() + '</span></div>' +
+      (discount > 0 ? '<div class="summary-row"><span>ส่วนลด ' + getDiscountPercent() + '%</span><span style="color:#8FBF8F">-฿ ' + discount + '</span></div>' : '') +
+      '<div class="summary-row"><span style="font-weight:700">ยอดรวม</span><span class="summary-total">฿ ' + finalPrice.toLocaleString() + '</span></div>' +
+      '<div class="summary-row"><span>ที่อยู่</span><span style="text-align:right;max-width:60%">' + escapeHtml(address) + '</span></div>' +
+      '<div class="summary-row"><span>เบอร์</span><span>' + escapeHtml(phone) + '</span></div>' +
+      '<div class="summary-row"><span>วันรับ</span><span>' + escapeHtml(date) + '</span></div>' +
+      (cardMessage ? '<div class="summary-row"><span>การ์ด</span><span style="text-align:right;max-width:60%;font-style:italic">"' + escapeHtml(cardMessage) + '"</span></div>' : '')
+
+    showPage('summary')
+  }
+
   async function submitOrder() {
     if (!selectedProduct) {
       alert('กรุณาเลือกสินค้าก่อนนะคะ~')
@@ -500,7 +557,7 @@ function goToSummary() {
     if (submitBtn && submitBtn.disabled) return
 
     const discount = getDiscount()
-    const finalPrice = Number(selectedProduct['ราคา']) - discount
+    const finalPrice = Number(selectedProduct['ราคา'] || 0) - discount
 
     const orderData = {
       type: 'order',
@@ -508,7 +565,7 @@ function goToSummary() {
       name: (currentUser && currentUser.displayName) ? currentUser.displayName : '',
       product: selectedProduct['ชื่อสินค้า'],
       price: finalPrice,
-      original_price: Number(selectedProduct['ราคา']),
+      original_price: Number(selectedProduct['ราคา'] || 0),
       discount: discount,
       address: (document.getElementById('address').value || '').trim(),
       phone: (document.getElementById('phone').value || '').trim(),
@@ -529,7 +586,6 @@ function goToSummary() {
         submitBtn.textContent = 'กำลังส่งออเดอร์...'
       }
 
-      // 1) บันทึกลง Google Sheets ก่อน (ขั้นนี้ต้องผ่าน)
       const res = await fetch(APPS_SCRIPT_URL, {
         method: 'POST',
         body: JSON.stringify(orderData)
@@ -547,7 +603,6 @@ function goToSummary() {
         throw new Error('save_failed: ' + (data.error || raw || String(res.status)))
       }
 
-      // 2) พยายามส่ง Flex เข้าแชท (ถ้าล้ม ไม่ให้ล้มทั้งออเดอร์)
       let chatWarn = ''
       try {
         if (liff.isInClient()) {
@@ -564,22 +619,17 @@ function goToSummary() {
                   { type: 'text', text: 'รับออเดอร์แล้วค่ะ 🌸', weight: 'bold', size: 'lg' },
                   { type: 'text', text: 'คุณ ' + orderData.name, size: 'sm', color: '#666666', margin: 'md' },
                   { type: 'separator', margin: 'md' },
-
                   { type: 'text', text: 'สินค้า: ' + orderData.product, wrap: true, margin: 'md' },
                   { type: 'text', text: 'ราคาเดิม: ฿ ' + Number(orderData.original_price).toLocaleString(), size: 'sm', color: '#666666' },
-
                   ...(orderData.discount > 0
                     ? [{ type: 'text', text: 'ส่วนลด: -฿ ' + Number(orderData.discount).toLocaleString(), size: 'sm', color: '#2E7D32' }]
                     : []),
-
                   { type: 'text', text: 'ยอดรวม: ฿ ' + Number(orderData.price).toLocaleString(), weight: 'bold', size: 'md' },
-
                   { type: 'separator', margin: 'md' },
                   { type: 'text', text: 'วันรับ: ' + orderData.delivery_date, margin: 'md' },
                   { type: 'text', text: 'เบอร์: ' + orderData.phone },
                   { type: 'text', text: 'ที่อยู่: ' + orderData.address, wrap: true },
                   { type: 'text', text: 'การ์ด: ' + (orderData.card_message ? '"' + orderData.card_message + '"' : '-'), wrap: true },
-
                   { type: 'text', text: 'paper blooms, real feelings.', size: 'xs', color: '#999999', margin: 'lg' }
                 ]
               }
@@ -593,15 +643,12 @@ function goToSummary() {
         chatWarn = 'บันทึกออเดอร์แล้ว แต่ส่งข้อความสรุปเข้าแชทไม่สำเร็จ'
       }
 
-      // 3) success page
       document.getElementById('page-summary').innerHTML =
         '<div style="text-align:center;padding:60px 20px">' +
         '<div style="font-size:60px;margin-bottom:16px">🌸</div>' +
         '<div style="font-size:22px;font-weight:700;color:#0A2A3A;margin-bottom:8px">เย้! ออเดอร์มาแล้วค่ะ!</div>' +
         '<div style="font-size:13px;color:#6B3A2A;font-style:italic;margin-bottom:24px">"โทริจะพับดอกไม้ให้ด้วยใจเลยนะคะ~"</div>' +
-        (chatWarn
-          ? '<div style="font-size:12px;color:#8B6A52;margin-bottom:14px">' + chatWarn + '</div>'
-          : '') +
+        (chatWarn ? '<div style="font-size:12px;color:#8B6A52;margin-bottom:14px">' + chatWarn + '</div>' : '') +
         '<button class="btn-primary" onclick="showPage(\'home\')">กลับหน้าแรก</button>' +
         '</div>'
 
@@ -617,18 +664,16 @@ function goToSummary() {
     }
   }
 
-// ── NAVIGATION ──
-function showPage(name) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'))
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'))
-  document.getElementById(`page-${name}`).classList.add('active')
-  const navEl = document.getElementById(`nav-${name}`)
-  if (navEl) navEl.classList.add('active')
-  window.scrollTo(0, 0)
-}
+  function showPage(name) {
+    document.querySelectorAll('.page').forEach(function (p) { p.classList.remove('active') })
+    document.querySelectorAll('.nav-item').forEach(function (n) { n.classList.remove('active') })
+    document.getElementById('page-' + name).classList.add('active')
+    const navEl = document.getElementById('nav-' + name)
+    if (navEl) navEl.classList.add('active')
+    window.scrollTo(0, 0)
+  }
 
-// ── START ──
-init()
+  init()
 </script>
 </body>
 </html>
