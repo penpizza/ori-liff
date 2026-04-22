@@ -644,11 +644,20 @@
     const TH_MONTHS = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม']
     const TH_MONTHS_SHORT = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.']
 
-    let currentUser = null
-    let userPoints = 0
-    let userTier = 'bud'
-    let selectedProduct = null
-    let catalog = []
+  let currentUser = null
+  let userPoints = 0
+  let userTier = 'bud'
+  let selectedProduct = null
+  let catalog = []
+  let userMeta = {
+    line_user_id: '',
+    name: '',
+    tier: 'bud',
+    points: 0,
+    expire_points: '',
+    birth_month: '',
+    join_date: ''
+  }
 
     // ── CALENDAR STATE ──
     let calState = { year: 0, month: 0, selected: '', minYmd: '', maxYmd: '' }
@@ -692,45 +701,71 @@
       }
 
     // ── USER DATA ──
-    async function loadUserData() {
-      try {
-        const res = await fetch(APPS_SCRIPT_URL + '?type=user&line_user_id=' + encodeURIComponent(currentUser.userId))
-        const data = await res.json()
-        userPoints = data.points || 0
-        userTier = data.tier || 'bud'
-        updatePointsUI()
-      } catch (e) { console.log('load user error', e) }
-    }
+  async function loadUserData() {
+    try {
+      const res = await fetch(APPS_SCRIPT_URL + '?type=user&line_user_id=' + encodeURIComponent(currentUser.userId))
+      const data = await res.json()
 
-    function updatePointsUI() {
-      const tierMax = { bud: 10, bloom: 30, blossom: 99 }
-      const progress = Math.min((userPoints / (tierMax[userTier] || 10)) * 100, 100)
-      document.getElementById('points-title').textContent = 'Petal Points — ' + userPoints + ' กลีบ'
-      document.getElementById('points-bar').style.width = progress + '%'
-      if (userTier === 'bloom') {
-        document.getElementById('points-sub').textContent = 'อีก ' + Math.max(0, 30 - userPoints) + ' กลีบ → Blossom'
-      } else if (userTier === 'bud') {
-        document.getElementById('points-sub').textContent = 'อีก ' + Math.max(0, 10 - userPoints) + ' กลีบ → Bloom'
-      } else {
-        document.getElementById('points-sub').textContent = 'Blossom tier — ขอบคุณมากนะคะ~'
+      userMeta = {
+        line_user_id: data.line_user_id || currentUser.userId || '',
+        name: data.name || currentUser.displayName || '',
+        tier: data.tier || 'bud',
+        points: Number(data.points || 0),
+        expire_points: data.expire_points || data['กลีบหมดอายุ'] || '',
+        birth_month: data.birth_month || data['เดือนเกิด'] || '',
+        join_date: data.join_date || data['วันที่สมัคร'] || ''
       }
 
-      const tierName = { bud: 'Bud 🌱', bloom: 'Bloom 🌸', blossom: 'Blossom 🌺' }
-      const discount = { bud: 0, bloom: 5, blossom: 10 }
-      document.getElementById('points-detail').innerHTML =
-        '<div style="background:white;border-radius:14px;border:0.5px solid #E8D4C0;padding:16px;margin-bottom:12px">' +
-        '<div style="font-size:11px;color:#8B6A52;margin-bottom:4px">tier ปัจจุบัน</div>' +
-        '<div style="font-size:22px;font-weight:700;color:#0A2A3A">' + tierName[userTier] + '</div>' +
-        '<div style="font-size:13px;color:#6B3A2A;margin-top:4px">' + userPoints + ' กลีบสะสม</div>' +
-        (discount[userTier] > 0 ? '<div style="font-size:11px;color:#8FBF8F;margin-top:4px">ส่วนลด ' + discount[userTier] + '% ทุกออเดอร์</div>' : '') +
-        '</div>' +
-        '<div style="background:#EEF7FF;border-radius:12px;padding:12px 14px;font-size:12px;color:#0A2A3A">' +
-        '<div style="font-weight:600;margin-bottom:6px">วิธีสะสมกลีบ</div>' +
-        '<div>ทุก 100 ฿ = 1 กลีบ</div>' +
-        '<div style="margin-top:4px;color:#4A8AAA">🎂 เดือนเกิด: +3 กลีบฟรี</div>' +
-        '<div style="margin-top:4px;color:#888;font-size:11px">กลีบหมดอายุ 31 ธ.ค. ของทุกปี</div>' +
-        '</div>'
+      userPoints = userMeta.points
+      userTier = userMeta.tier
+      updatePointsUI()
+    } catch (e) {
+      console.log('load user error', e)
     }
+  }
+
+  function updatePointsUI() {
+    const tierMax = { bud: 10, bloom: 30, blossom: 99 }
+    const progress = Math.min((userPoints / (tierMax[userTier] || 10)) * 100, 100)
+
+    document.getElementById('points-title').textContent = 'Petal Points — ' + userPoints + ' กลีบ'
+    document.getElementById('points-bar').style.width = progress + '%'
+
+    if (userTier === 'bloom') {
+      document.getElementById('points-sub').textContent = 'อีก ' + Math.max(0, 30 - userPoints) + ' กลีบ → Blossom'
+    } else if (userTier === 'bud') {
+      document.getElementById('points-sub').textContent = 'อีก ' + Math.max(0, 10 - userPoints) + ' กลีบ → Bloom'
+    } else {
+      document.getElementById('points-sub').textContent = 'Blossom tier — ขอบคุณมากนะคะ~'
+    }
+
+    const tierName = { bud: 'Bud 🌱', bloom: 'Bloom 🌸', blossom: 'Blossom 🌺' }
+    const discount = { bud: 0, bloom: 5, blossom: 10 }
+
+    const profileRows =
+      '<div style="margin-top:10px;padding-top:10px;border-top:0.5px solid #E8D4C0;font-size:11px;color:#6B3A2A;line-height:1.7">' +
+      '<div>LINE ID: ' + escapeHtml(userMeta.line_user_id || '-') + '</div>' +
+      '<div>ชื่อ: ' + escapeHtml(userMeta.name || '-') + '</div>' +
+      '<div>กลีบหมดอายุ: ' + escapeHtml(userMeta.expire_points || '-') + '</div>' +
+      '<div>เดือนเกิด: ' + escapeHtml(userMeta.birth_month || '-') + '</div>' +
+      '<div>วันที่สมัคร: ' + escapeHtml(userMeta.join_date || '-') + '</div>' +
+      '</div>'
+
+    document.getElementById('points-detail').innerHTML =
+      '<div style="background:white;border-radius:14px;border:0.5px solid #E8D4C0;padding:16px;margin-bottom:12px">' +
+      '<div style="font-size:11px;color:#8B6A52;margin-bottom:4px">tier ปัจจุบัน</div>' +
+      '<div style="font-size:22px;font-weight:700;color:#0A2A3A">' + tierName[userTier] + '</div>' +
+      '<div style="font-size:13px;color:#6B3A2A;margin-top:4px">' + userPoints + ' กลีบสะสม</div>' +
+      (discount[userTier] > 0 ? '<div style="font-size:11px;color:#8FBF8F;margin-top:4px">ส่วนลด ' + discount[userTier] + '% ทุกออเดอร์</div>' : '') +
+      profileRows +
+      '</div>' +
+      '<div style="background:#EEF7FF;border-radius:12px;padding:12px 14px;font-size:12px;color:#0A2A3A">' +
+      '<div style="font-weight:600;margin-bottom:6px">วิธีสะสมกลีบ</div>' +
+      '<div>ทุก 100 ฿ = 1 กลีบ</div>' +
+      '<div style="margin-top:4px;color:#4A8AAA">🎂 เดือนเกิด: +3 กลีบฟรี</div>' +
+      '<div style="margin-top:4px;color:#888;font-size:11px">กลีบหมดอายุ 31 ธ.ค. ของทุกปี</div>' +
+      '</div>'
+  }
 
     // ── CATALOG ──
     async function loadCatalog() {
