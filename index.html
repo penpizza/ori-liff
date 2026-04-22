@@ -98,6 +98,7 @@
       background: white; border-radius: 14px;
       border: 0.5px solid #E8D4C0; overflow: hidden;
       cursor: pointer;
+      touch-action: manipulation;
     }
     .product-img {
       height: 110px; background: var(--sky);
@@ -172,6 +173,34 @@
       text-align: center; padding: 40px;
       color: var(--brown); font-size: 13px;
     }
+
+    .skeleton-card {
+  background: white;
+  border-radius: 14px;
+  border: 0.5px solid #E8D4C0;
+  overflow: hidden;
+  }
+  .skeleton-img {
+    height: 110px;
+    background: linear-gradient(90deg, #e9edf1 25%, #f6f8fa 37%, #e9edf1 63%);
+    background-size: 400% 100%;
+    animation: shimmer 1.2s infinite linear;
+  }
+  .skeleton-line {
+    height: 10px;
+    border-radius: 6px;
+    margin: 10px;
+    background: linear-gradient(90deg, #eceff3 25%, #f7f9fb 37%, #eceff3 63%);
+    background-size: 400% 100%;
+    animation: shimmer 1.2s infinite linear;
+  }
+  .skeleton-line.short {
+    width: 55%;
+  }
+  @keyframes shimmer {
+    0% { background-position: 100% 0; }
+    100% { background-position: 0 0; }
+  }
   </style>
 </head>
 <body>
@@ -416,6 +445,12 @@
 
   async function loadCatalog() {
     const now = Date.now()
+    
+    const hasCache = !!localStorage.getItem(CATALOG_CACHE_KEY)
+    if (!hasCache) {
+      renderSkeleton('featured-products', 4)
+      renderSkeleton('all-products', 6)
+    }
 
     try {
       const cachedRaw = localStorage.getItem(CATALOG_CACHE_KEY)
@@ -471,6 +506,11 @@
       '<div class="product-price">฿ ' + Number(p['ราคา'] || 0).toLocaleString() + '</div>' +
       '</div>' +
       '</div>'
+      document.querySelectorAll('.product-card').forEach(function (el) {
+      el.addEventListener('click', function () {
+        selectProduct(el.dataset.id)
+      })
+    })
   }
 
   function renderProducts() {
@@ -485,6 +525,18 @@
     document.getElementById('featured-products').innerHTML = featuredHtml || '<div class="loading">ยังไม่มีสินค้านะคะ~</div>'
     document.getElementById('all-products').innerHTML = allHtml || '<div class="loading">ยังไม่มีสินค้านะคะ~</div>'
   }
+
+  function renderSkeleton(targetId, count) {
+      const skeleton = Array.from({ length: count }).map(() => (
+        '<div class="skeleton-card">' +
+        '<div class="skeleton-img"></div>' +
+        '<div class="skeleton-line"></div>' +
+        '<div class="skeleton-line short"></div>' +
+        '</div>'
+      )).join('')
+
+      document.getElementById(targetId).innerHTML = skeleton
+    }
 
   function selectProduct(id) {
     selectedProduct = catalog.find(function (p) {
