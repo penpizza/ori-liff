@@ -460,10 +460,10 @@
       ? '<img src="' + escapeHtml(imageUrl) + '" alt="' + escapeHtml(p['ชื่อสินค้า'] || 'product') + '" loading="lazy" decoding="async">'
       : '🌸'
 
-    const idArg = JSON.stringify(String(p['product_id'] || ''))
+    const idArg = String(p['product_id'] || '').replace(/'/g, "\\'")
 
     return '' +
-      '<div class="product-card" onclick="selectProduct(' + idArg + ')">' +
+      '<div class="product-card" onclick="selectProduct(\'' + idArg + '\')">' +
       '<div class="product-img">' + imageHtml + '</div>' +
       '<div class="product-info">' +
       '<div class="product-name">' + escapeHtml(p['ชื่อสินค้า'] || '-') + '</div>' +
