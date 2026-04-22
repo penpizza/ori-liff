@@ -742,13 +742,19 @@
     const tierName = { bud: 'Bud 🌱', bloom: 'Bloom 🌸', blossom: 'Blossom 🌺' }
     const discount = { bud: 0, bloom: 5, blossom: 10 }
 
+    const now = new Date()
+    const defaultExpire = '31/12/' + now.getFullYear()
+
+    const birthMonthLabel = userMeta.birth_month ? userMeta.birth_month : 'ยังไม่ได้ระบุ'
+    const joinDateLabel = userMeta.join_date ? userMeta.join_date : '-'
+    const expireLabel = userMeta.expire_points ? userMeta.expire_points : defaultExpire
+
     const profileRows =
       '<div style="margin-top:10px;padding-top:10px;border-top:0.5px solid #E8D4C0;font-size:11px;color:#6B3A2A;line-height:1.7">' +
-      '<div>LINE ID: ' + escapeHtml(userMeta.line_user_id || '-') + '</div>' +
       '<div>ชื่อ: ' + escapeHtml(userMeta.name || '-') + '</div>' +
-      '<div>กลีบหมดอายุ: ' + escapeHtml(userMeta.expire_points || '-') + '</div>' +
-      '<div>เดือนเกิด: ' + escapeHtml(userMeta.birth_month || '-') + '</div>' +
-      '<div>วันที่สมัคร: ' + escapeHtml(userMeta.join_date || '-') + '</div>' +
+      '<div>กลีบหมดอายุ: ' + escapeHtml(expireLabel) + '</div>' +
+      '<div>เดือนเกิด: ' + escapeHtml(birthMonthLabel) + '</div>' +
+      '<div>วันที่สมัคร: ' + escapeHtml(joinDateLabel) + '</div>' +
       '</div>'
 
     document.getElementById('points-detail').innerHTML =
@@ -766,7 +772,7 @@
       '<div style="margin-top:4px;color:#888;font-size:11px">กลีบหมดอายุ 31 ธ.ค. ของทุกปี</div>' +
       '</div>'
   }
-
+  
     // ── CATALOG ──
     async function loadCatalog() {
       const now = Date.now()
@@ -948,7 +954,47 @@
       if (!selectedProduct) return 0
       return Math.floor(Number(selectedProduct['ราคา'] || 0) * getDiscountPercent() / 100)
     }
+    async function ensureBirthMonthProfile() {
+        if (userMeta.birth_month) return
 
+        const month = prompt('ระบุเดือนเกิด (1-12) เพื่อรับโบนัสเดือนเกิดค่ะ')
+        if (!month) return
+
+        const m = Number(month)
+        if (!Number.isInteger(m) || m < 1 || m > 12) {
+          alert('เดือนเกิดต้องเป็นตัวเลข 1-12')
+          return
+        }
+
+        const ok = await saveBirthMonth(String(m))
+        if (ok) {
+          userMeta.birth_month = String(m)
+          updatePointsUI()
+        }
+      }
+
+      async function saveBirthMonth(month) {
+        try {
+          const payload = {
+            type: 'update_profile',
+            line_user_id: currentUser.userId,
+            name: currentUser.displayName || '',
+            birth_month: month
+          }
+
+          const res = await fetch(APPS_SCRIPT_URL, {
+            method: 'POST',
+            body: JSON.stringify(payload)
+          })
+
+          const txt = await res.text()
+          const data = txt ? JSON.parse(txt) : {}
+          return !!(res.ok && data.ok)
+        } catch (e) {
+          console.log('saveBirthMonth error', e)
+          return false
+        }
+      }
     // ── SUMMARY ──
     function goToSummary() {
       const address = document.getElementById('address').value
