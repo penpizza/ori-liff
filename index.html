@@ -445,12 +445,10 @@
 
   async function loadCatalog() {
     const now = Date.now()
-    
-    const hasCache = !!localStorage.getItem(CATALOG_CACHE_KEY)
-    if (!hasCache) {
-      renderSkeleton('featured-products', 4)
-      renderSkeleton('all-products', 6)
-    }
+
+    const estimated = getEstimatedSkeletonCount()
+    renderSkeleton('featured-products', Math.min(4, estimated))
+    renderSkeleton('all-products', estimated)
 
     try {
       const cachedRaw = localStorage.getItem(CATALOG_CACHE_KEY)
@@ -506,11 +504,7 @@
       '<div class="product-price">฿ ' + Number(p['ราคา'] || 0).toLocaleString() + '</div>' +
       '</div>' +
       '</div>'
-      document.querySelectorAll('.product-card').forEach(function (el) {
-      el.addEventListener('click', function () {
-        selectProduct(el.dataset.id)
-      })
-    })
+
   }
 
   function renderProducts() {
@@ -521,7 +515,7 @@
     const featured = active.slice(0, 4)
     const featuredHtml = featured.map(renderProductCard).join('')
     const allHtml = active.map(renderProductCard).join('')
-
+    localStorage.setItem('ori_catalog_last_count', String(active.length))
     document.getElementById('featured-products').innerHTML = featuredHtml || '<div class="loading">ยังไม่มีสินค้านะคะ~</div>'
     document.getElementById('all-products').innerHTML = allHtml || '<div class="loading">ยังไม่มีสินค้านะคะ~</div>'
   }
@@ -536,6 +530,26 @@
       )).join('')
 
       document.getElementById(targetId).innerHTML = skeleton
+  }
+
+  function getEstimatedSkeletonCount() {
+      const last = Number(localStorage.getItem('ori_catalog_last_count') || 0)
+      if (last > 0) return Math.min(Math.max(last, 4), 24)
+
+      try {
+        const cachedRaw = localStorage.getItem(CATALOG_CACHE_KEY)
+        if (cachedRaw) {
+          const cached = JSON.parse(cachedRaw)
+          if (cached && Array.isArray(cached.data)) {
+            const activeCount = cached.data.filter(function (p) {
+              return String((p && p['สถานะ']) || '').toLowerCase() === 'active'
+            }).length
+            if (activeCount > 0) return Math.min(Math.max(activeCount, 4), 24)
+          }
+        }
+      } catch (_) { }
+
+      return 6
     }
 
   function selectProduct(id) {
