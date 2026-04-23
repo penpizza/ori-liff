@@ -34,7 +34,6 @@
       min-height: 100vh;
     }
 
-    /* PAGES */
     .page {
       display: none;
       padding-bottom: 80px;
@@ -51,12 +50,6 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-    }
-
-    .topbar-brand {
-      display: flex;
-      align-items: center;
-      gap: 8px;
     }
 
     .topbar-name {
@@ -113,9 +106,6 @@
       margin: 16px;
       border-radius: 16px;
       padding: 18px 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
     }
 
     .hero-slogan {
@@ -146,7 +136,11 @@
       display: inline-block;
     }
 
-    /* SECTION */
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: default;
+    }
+
     .section {
       padding: 0 16px;
       margin-bottom: 20px;
@@ -159,7 +153,7 @@
       margin-bottom: 12px;
     }
 
-    /* PRODUCT CARD */
+    /* PRODUCT */
     .product-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -215,7 +209,7 @@
       margin-top: 6px;
     }
 
-    /* POINTS CARD */
+    /* POINTS BANNER */
     .points-card {
       background: var(--dark);
       border-radius: 14px;
@@ -271,7 +265,7 @@
       margin-top: 3px;
     }
 
-    /* ORDER FORM */
+    /* FORM */
     .form-group {
       margin-bottom: 14px;
     }
@@ -361,11 +355,11 @@
 
     @keyframes shimmer {
       0% {
-        background-position: 100% 0;
+        background-position: 100% 0
       }
 
       100% {
-        background-position: 0 0;
+        background-position: 0 0
       }
     }
 
@@ -479,67 +473,221 @@
       font-style: italic;
       min-height: 18px;
     }
-      /* POINTS PROFILE LAYOUT */
-.points-profile-card {
-  background: #66b9e6;
-  border-radius: 16px;
-  padding: 18px 16px;
-  text-align: center;
-  color: #0A2A3A;
-}
 
-.points-avatar {
-  width: 92px;
-  height: 92px;
-  border-radius: 50%;
-  background: #E24D9C;
-  margin: 0 auto 12px;
-}
+    /* POINTS PAGE */
+    .pts-hero {
+      background: var(--blue);
+      border-radius: 16px;
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
 
-.points-name {
-  font-size: 28px;
-  font-weight: 700;
-  line-height: 1.1;
-}
+    .pts-hero-top {
+      padding: 20px 20px 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
 
-.points-birth-row {
-  margin-top: 6px;
-  font-size: 14px;
-}
+    .pts-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: var(--sky);
+      overflow: hidden;
+      flex-shrink: 0;
+      border: 2.5px solid white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+    }
 
-.points-edit-link {
-  display: inline-block;
-  margin-top: 6px;
-  font-size: 12px;
-  color: #0A2A3A;
-  border-bottom: 1px solid rgba(10,42,58,.4);
-  cursor: pointer;
-}
+    .pts-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
 
-.points-panel {
-  background: #66b9e6;
-  border-radius: 16px;
-  padding: 18px 16px;
-  color: #0A2A3A;
-}
+    .pts-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--dark);
+    }
 
-.points-panel-title {
-  font-size: 36px;
-  font-weight: 700;
-  margin-bottom: 10px;
-}
+    .pts-tier-badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 20px;
+      background: var(--dark);
+      color: var(--cream);
+      margin-top: 5px;
+    }
 
-.points-panel-line {
-  font-size: 15px;
-  margin-top: 4px;
-}
+    .pts-discount-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--sage);
+      color: #0A2A0A;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-top: 5px;
+    }
 
-.birth-empty {
-  margin-top: 8px;
-  font-size: 12px;
-  color: #6B3A2A;
-}
-    
+    .pts-hero-bottom {
+      background: var(--dark);
+      padding: 16px 20px;
+    }
+
+    .pts-count {
+      font-size: 44px;
+      font-weight: 700;
+      color: white;
+      line-height: 1;
+    }
+
+    .pts-count-label {
+      font-size: 12px;
+      color: var(--blue);
+      font-weight: 300;
+      margin-top: 2px;
+    }
+
+    .pts-progress-row {
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .pts-progress-bar {
+      flex: 1;
+      height: 6px;
+      background: #1A3A5A;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .pts-progress-fill {
+      height: 100%;
+      background: var(--blue);
+      border-radius: 3px;
+    }
+
+    .pts-progress-label {
+      font-size: 10px;
+      color: var(--blue);
+      font-weight: 300;
+      white-space: nowrap;
+    }
+
+    .pts-section {
+      background: white;
+      border-radius: 14px;
+      border: 0.5px solid #E8D4C0;
+      padding: 14px 16px;
+      margin-bottom: 10px;
+    }
+
+    .pts-section-title {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--brown);
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .pts-info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 7px 0;
+      border-bottom: 0.5px solid #F5EDE4;
+      font-size: 13px;
+    }
+
+    .pts-info-row:last-child {
+      border-bottom: none;
+    }
+
+    .pts-info-label {
+      color: #8B6A52;
+    }
+
+    .pts-info-value {
+      color: var(--dark);
+      font-weight: 600;
+      text-align: right;
+    }
+
+    .pts-earn-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 0.5px solid #F5EDE4;
+      font-size: 12px;
+      color: var(--dark);
+    }
+
+    .pts-earn-row:last-child {
+      border-bottom: none;
+    }
+
+    .pts-earn-icon {
+      font-size: 16px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .pts-earn-note {
+      font-size: 10px;
+      color: #8B6A52;
+      margin-top: 2px;
+    }
+
+    .birth-editor {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-top: 8px;
+    }
+
+    .birth-editor select {
+      flex: 1;
+      padding: 8px 12px;
+      font-size: 12px;
+    }
+
+    .birth-editor .birth-save-btn {
+      background: var(--blue);
+      border: none;
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--dark);
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .birth-edit-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 13px;
+      padding: 2px 6px;
+      color: var(--brown);
+      vertical-align: middle;
+    }
   </style>
 </head>
 
@@ -547,23 +695,21 @@
 
   <!-- TOP BAR -->
   <div class="topbar">
-    <div class="topbar-brand">
-      <div>
-        <div class="topbar-name">Ori</div>
-        <div class="topbar-sub">paper flowers</div>
-      </div>
+    <div>
+      <div class="topbar-name">Ori</div>
+      <div class="topbar-sub">paper flowers</div>
     </div>
-    <div id="user-avatar" style="width:32px;height:32px;border-radius:50%;background:var(--sky);overflow:hidden;"></div>
+    <div id="user-avatar"
+      style="width:32px;height:32px;border-radius:50%;background:var(--sky);overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:14px;">
+      🌸</div>
   </div>
 
-  <!-- PAGE: HOME -->
+  <!-- HOME -->
   <div id="page-home" class="page active">
     <div class="hero">
-      <div>
-        <div class="hero-slogan">paper blooms,<br>real feelings.</div>
-        <div class="hero-voice">"สวัสดีค่ะ! โทริดีใจมากที่มานะคะ~"</div>
-        <button class="btn-primary" onclick="showPage('catalog')">ดูดอกไม้ทั้งหมด</button>
-      </div>
+      <div class="hero-slogan">paper blooms,<br>real feelings.</div>
+      <div class="hero-voice">"สวัสดีค่ะ! โทริดีใจมากที่มานะคะ~"</div>
+      <button class="btn-primary" onclick="showPage('catalog')">ดูดอกไม้ทั้งหมด</button>
     </div>
     <div class="points-card" onclick="showPage('points')">
       <div class="points-icon">🌸</div>
@@ -585,7 +731,7 @@
     </div>
   </div>
 
-  <!-- PAGE: CATALOG -->
+  <!-- CATALOG -->
   <div id="page-catalog" class="page">
     <div style="padding:16px 16px 8px">
       <div class="section-title">เลือกดอกไม้เลยนะคะ~</div>
@@ -595,7 +741,7 @@
     </div>
   </div>
 
-  <!-- PAGE: ORDER FORM -->
+  <!-- ORDER FORM -->
   <div id="page-order" class="page">
     <div style="padding:16px">
       <div style="margin-bottom:16px">
@@ -622,13 +768,11 @@
         <div class="cal-selected-label" id="selected-date-display"></div>
       </div>
       <button class="btn-primary" style="width:100%;padding:14px;font-size:14px;border-radius:12px;margin-top:4px"
-        onclick="goToSummary()">
-        ดูสรุปออเดอร์
-      </button>
+        onclick="goToSummary()">ดูสรุปออเดอร์</button>
     </div>
   </div>
 
-  <!-- PAGE: ORDER SUMMARY -->
+  <!-- SUMMARY -->
   <div id="page-summary" class="page">
     <div style="padding:16px">
       <div style="margin-bottom:16px">
@@ -638,25 +782,18 @@
       <div
         style="background:#0A2A3A;border-radius:12px;padding:12px 14px;margin-bottom:14px;display:flex;gap:10px;align-items:flex-start">
         <div style="font-size:24px;flex-shrink:0">🌸</div>
-        <p style="font-size:12px;color:#A8CEDE;font-style:italic">
-          "โทริจะพับดอกไม้ให้ด้วยใจเลยนะคะ~"
-        </p>
+        <p style="font-size:12px;color:#A8CEDE;font-style:italic">"โทริจะพับดอกไม้ให้ด้วยใจเลยนะคะ~"</p>
       </div>
       <button class="btn-primary" style="width:100%;padding:14px;font-size:14px;border-radius:12px"
-        onclick="submitOrder()">
-        ยืนยันและส่งออเดอร์
-      </button>
+        onclick="submitOrder()">ยืนยันและส่งออเดอร์</button>
       <button onclick="showPage('order')"
-        style="width:100%;padding:12px;font-size:13px;border-radius:12px;background:transparent;border:0.5px solid #E8D4C0;font-family:inherit;color:var(--brown);cursor:pointer;margin-top:8px">
-        แก้ไข
-      </button>
+        style="width:100%;padding:12px;font-size:13px;border-radius:12px;background:transparent;border:0.5px solid #E8D4C0;font-family:inherit;color:var(--brown);cursor:pointer;margin-top:8px">แก้ไข</button>
     </div>
   </div>
 
-  <!-- PAGE: POINTS -->
+  <!-- POINTS -->
   <div id="page-points" class="page">
     <div style="padding:16px">
-      <div class="section-title" style="margin-bottom:16px">กลีบของโทริค่ะ~</div>
       <div id="points-detail"></div>
     </div>
   </div>
@@ -667,8 +804,7 @@
       <svg viewBox="0 0 24 24" fill="none">
         <path d="M3 12L12 3L21 12V21H15V15H9V21H3V12Z" stroke="currentColor" stroke-width="1.8"
           stroke-linejoin="round" />
-      </svg>
-      หน้าแรก
+      </svg>หน้าแรก
     </div>
     <div class="nav-item" id="nav-catalog" onclick="showPage('catalog')">
       <svg viewBox="0 0 24 24" fill="none">
@@ -676,624 +812,289 @@
         <rect x="14" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.8" />
         <rect x="3" y="14" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.8" />
         <rect x="14" y="14" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.8" />
-      </svg>
-      สินค้า
+      </svg>สินค้า
     </div>
     <div class="nav-item" id="nav-points" onclick="showPage('points')">
       <svg viewBox="0 0 24 24" fill="none">
         <path
           d="M12 2C10 2 8 3.5 7.5 5.5C5.5 4.5 3 5.5 2 7.5C1 9.5 2 11.5 4 12.5C2 13.5 1 15.5 2 17.5C3 19.5 5.5 20.5 7.5 19.5C8 21.5 10 23 12 23C14 23 16 21.5 16.5 19.5C18.5 20.5 21 19.5 22 17.5C23 15.5 22 13.5 20 12.5C22 11.5 23 9.5 22 7.5C21 5.5 18.5 4.5 16.5 5.5C16 3.5 14 2 12 2Z"
           stroke="currentColor" stroke-width="1.8" />
-      </svg>
-      แต้ม
+      </svg>แต้ม
     </div>
   </div>
 
   <script>
     const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyLtcdWTZ1I5h0pqSJ1yLaKdiK4bgkIyqTuJQvjRUGc6_aQDzQJvkbiIo-eNsPN0w5O/exec'
     const LIFF_ID = '2009801886-j4H29HTq'
-
     const CATALOG_CACHE_KEY = 'ori_catalog_cache_v1'
-    const CATALOG_CACHE_TTL_MS = 60 * 1000
+    const CATALOG_CACHE_TTL_MS = 60000
     const FALLBACK_CATALOG = [
       { product_id: '1', ชื่อสินค้า: 'ช่อ 5 กลีบ', ราคา: 290, รายละเอียด: 'พับด้วยมือ · 2-3 วัน', สถานะ: 'active', image_url: '', image_thumb_url: '' },
       { product_id: '2', ชื่อสินค้า: 'ช่อ Butter', ราคา: 350, รายละเอียด: 'edition พิเศษ · 3-4 วัน', สถานะ: 'active', image_url: '', image_thumb_url: '' }
     ]
-
     const TH_DAYS = ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์']
     const TH_DAYS_SHORT = ['อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส']
     const TH_MONTHS = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม']
     const TH_MONTHS_SHORT = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.']
 
-  let currentUser = null
-  let userPoints = 0
-  let userTier = 'bud'
-  let selectedProduct = null
-  let catalog = []
-  let userMeta = {
-    line_user_id: '',
-    name: '',
-    tier: 'bud',
-    points: 0,
-    expire_points: '',
-    birth_month: '',
-    join_date: ''
-  }
-
-    // ── CALENDAR STATE ──
+    let currentUser = null, userPoints = 0, userTier = 'bud', selectedProduct = null, catalog = []
+    let userMeta = { line_user_id: '', name: '', tier: 'bud', points: 0, expire_points: '', birth_month: '', join_date: '' }
     let calState = { year: 0, month: 0, selected: '', minYmd: '', maxYmd: '' }
 
-    function escapeHtml(value) {
-      return String(value || '')
-        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;').replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;')
-    }
+    function esc(v) { return String(v || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;') }
+    function ymd(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0') }
+    function imgUrl(p) { return String((p && (p.image_thumb_url || p.image_url || p['รูป'])) || '').trim() }
 
-    function toLocalYmd(d) {
-      const y = d.getFullYear()
-      const m = String(d.getMonth() + 1).padStart(2, '0')
-      const day = String(d.getDate()).padStart(2, '0')
-      return y + '-' + m + '-' + day
-    }
-
-    function getProductImageUrl(p) {
-      return String((p && (p.image_thumb_url || p.image_url || p['รูป'])) || '').trim()
-    }
-
-    // ── INIT ──
     async function init() {
-        await liff.init({ liffId: LIFF_ID })
-        if (!liff.isLoggedIn()) { liff.login(); return }
-
-        const profile = await liff.getProfile()
-        currentUser = profile
-
-        const avatar = document.getElementById('user-avatar')
-        avatar.innerHTML = '<img src="' + escapeHtml(profile.pictureUrl || '') + '" style="width:100%;height:100%;object-fit:cover">'
-
-        bindProductTapDelegation()
-
-        await Promise.all([loadUserData(), loadCatalog()])
-
-        if (selectedProduct && document.getElementById('page-order').classList.contains('active')) {
-          initCalendar()
-        }
-      }
-
-    // ── USER DATA ──
-  async function loadUserData() {
-    try {
-      const res = await fetch(APPS_SCRIPT_URL + '?type=user&line_user_id=' + encodeURIComponent(currentUser.userId))
-      const data = await res.json()
-
-      userMeta = {
-        line_user_id: data.line_user_id || currentUser.userId || '',
-        name: data.name || currentUser.displayName || '',
-        tier: data.tier || 'bud',
-        points: Number(data.points || 0),
-        expire_points: data.expire_points || data['กลีบหมดอายุ'] || '',
-        birth_month: data.birth_month || data['เดือนเกิด'] || '',
-        join_date: data.join_date || data['วันที่สมัคร'] || ''
-      }
-
-      userPoints = userMeta.points
-      userTier = userMeta.tier
-      updatePointsUI()
-    } catch (e) {
-      console.log('load user error', e)
+      await liff.init({ liffId: LIFF_ID })
+      if (!liff.isLoggedIn()) { liff.login(); return }
+      const profile = await liff.getProfile()
+      currentUser = profile
+      const av = document.getElementById('user-avatar')
+      if (profile.pictureUrl) { av.innerHTML = '<img src="' + esc(profile.pictureUrl) + '" style="width:100%;height:100%;object-fit:cover">' }
+      else { av.textContent = (profile.displayName || '?').charAt(0).toUpperCase() }
+      bindTaps()
+      await Promise.all([loadUserData(), loadCatalog()])
     }
-  }
 
-  function updatePointsUI() {
-      const tierMax = { bud: 10, bloom: 30, blossom: 99 }
-      const progress = Math.min((userPoints / (tierMax[userTier] || 10)) * 100, 100)
+    async function loadUserData() {
+      try {
+        const res = await fetch(APPS_SCRIPT_URL + '?type=user&line_user_id=' + encodeURIComponent(currentUser.userId))
+        const d = await res.json()
+        userMeta = { line_user_id: d.line_user_id || currentUser.userId || '', name: d.name || currentUser.displayName || '', tier: d.tier || 'bud', points: Number(d.points || 0), expire_points: d.expire_points || d['กลีบหมดอายุ'] || '', birth_month: d.birth_month || d['เดือนเกิด'] || '', join_date: d.join_date || d['วันที่สมัคร'] || '' }
+        userPoints = userMeta.points; userTier = userMeta.tier; updatePointsUI()
+      } catch (e) { console.log('load user error', e) }
+    }
 
+    function updatePointsUI() {
+      const max = { bud: 10, bloom: 30, blossom: 99 }
+      const pct = Math.min((userPoints / (max[userTier] || 10)) * 100, 100)
       document.getElementById('points-title').textContent = 'Petal Points — ' + userPoints + ' กลีบ'
-      document.getElementById('points-bar').style.width = progress + '%'
+      document.getElementById('points-bar').style.width = pct + '%'
+      if (userTier === 'bloom') document.getElementById('points-sub').textContent = 'อีก ' + Math.max(0, 30 - userPoints) + ' กลีบ → Blossom'
+      else if (userTier === 'bud') document.getElementById('points-sub').textContent = 'อีก ' + Math.max(0, 10 - userPoints) + ' กลีบ → Bloom'
+      else document.getElementById('points-sub').textContent = 'Blossom tier — ขอบคุณมากนะคะ~'
+      renderPointsPage()
+    }
 
-      if (userTier === 'bloom') {
-        document.getElementById('points-sub').textContent = 'อีก ' + Math.max(0, 30 - userPoints) + ' กลีบ → Blossom'
-      } else if (userTier === 'bud') {
-        document.getElementById('points-sub').textContent = 'อีก ' + Math.max(0, 10 - userPoints) + ' กลีบ → Bloom'
-      } else {
-        document.getElementById('points-sub').textContent = 'Blossom tier — ขอบคุณมากนะคะ~'
-      }
+    function renderPointsPage() {
+      const tInfo = { bud: { label: '🌱 Bud', discount: 0, next: 'Bloom', needed: Math.max(0, 10 - userPoints) }, bloom: { label: '🌸 Bloom', discount: 5, next: 'Blossom', needed: Math.max(0, 30 - userPoints) }, blossom: { label: '🌺 Blossom', discount: 10, next: null, needed: 0 } }
+      const t = tInfo[userTier] || tInfo.bud
+      const max = { bud: 10, bloom: 30, blossom: 99 }
+      const pct = Math.min((userPoints / (max[userTier] || 10)) * 100, 100)
+      const name = userMeta.name || (currentUser && currentUser.displayName) || 'Profile'
+      const expire = userMeta.expire_points || ('31 ธ.ค. ' + (new Date().getFullYear() + 543))
+      const birthName = userMeta.birth_month ? (TH_MONTHS[Number(userMeta.birth_month) - 1] || userMeta.birth_month) : null
+      const avatarHtml = (currentUser && currentUser.pictureUrl) ? '<img src="' + esc(currentUser.pictureUrl) + '" style="width:100%;height:100%;object-fit:cover">' : '🌸'
+      const discountHtml = t.discount > 0 ? '<div class="pts-discount-tag">✦ ส่วนลด ' + t.discount + '% ทุกออเดอร์</div>' : ''
+      const progressLabel = t.next ? 'อีก ' + t.needed + ' กลีบ → ' + t.next : 'tier สูงสุดแล้วค่ะ 🌺'
 
-      const tierName = { bud: 'Bud', bloom: 'Bloom', blossom: 'Blossom' }
-      const discount = { bud: 0, bloom: 5, blossom: 10 }
+      // birth month UI
+      const monthOptions = TH_MONTHS.map(function (m, i) { return '<option value="' + (i + 1) + '"' + (userMeta.birth_month === (String(i + 1)) ? ' selected' : '') + '>' + m + '</option>' }).join('')
+      const birthHtml = birthName
+        ? '<div style="display:flex;align-items:center;justify-content:space-between"><span>' + esc(birthName) + '</span><button class="birth-edit-btn" onclick="showBirthEditor()">✏️ แก้ไข</button></div>'
+        : '<div id="birth-editor-wrap"><div class="birth-editor"><select id="birth-month-select"><option value="">เลือกเดือนเกิด</option>' + monthOptions + '</select><button class="birth-save-btn" onclick="saveBirthMonthFromDropdown()">บันทึก</button></div><div style="font-size:10px;color:#8B6A52;margin-top:4px">บอกโทริด้วยนะคะ จะได้มีของขวัญวันเกิด~</div></div>'
 
-      const now = new Date()
-      const defaultExpire = '31/12/' + now.getFullYear()
-      const birthMonthLabel = userMeta.birth_month ? ('เดือน ' + userMeta.birth_month) : 'ยังไม่ได้ระบุ'
-      const joinDateLabel = userMeta.join_date ? userMeta.join_date : '-'
-      const expireLabel = userMeta.expire_points ? userMeta.expire_points : defaultExpire
-      const nameLabel = userMeta.name || (currentUser && currentUser.displayName) || 'Profile'
-
-      const editControl = renderBirthEditControl()
-      const birthEmptyNote = userMeta.birth_month
-        ? ''
-        : '<div class="birth-empty">ยังไม่เคยกรอกเดือนเกิด กรุณาเลือกเดือนแล้วกดบันทึก</div>'
       document.getElementById('points-detail').innerHTML =
-        '<div class="points-profile-card">' +
-        '<div class="points-avatar"></div>' +
-        '<div class="points-name">' + escapeHtml(nameLabel) + '</div>' +
-        '<div class="points-birth-row">เดือนเกิด: ' + escapeHtml(birthMonthLabel) + editControl + '</div>' +
-        birthEmptyNote +
+        '<div class="pts-hero">' +
+        '<div class="pts-hero-top">' +
+        '<div class="pts-avatar">' + avatarHtml + '</div>' +
+        '<div>' +
+        '<div class="pts-name">' + esc(name) + '</div>' +
+        '<div class="pts-tier-badge">' + t.label + '</div>' +
+        discountHtml +
         '</div>' +
-        '<div style="height:10px"></div>' +
-        '<div class="points-panel">' +
-        '<div class="points-panel-title">' + userPoints + '</div>' +
-        '<div class="points-panel-line">Tier: ' + escapeHtml(tierName[userTier] || 'Bud') + '</div>' +
-        '<div class="points-panel-line">ส่วนลด: ' + discount[userTier] + '%</div>' +
-        '<div class="points-panel-line">กลีบหมดอายุ: ' + escapeHtml(expireLabel) + '</div>' +
-        '<div class="points-panel-line">วันที่สมัคร: ' + escapeHtml(joinDateLabel) + '</div>' +
         '</div>' +
-        '<div style="height:10px"></div>' +
-        '<div class="points-panel">' +
-        '<div style="font-size:22px;font-weight:700;">เงื่อนไขการได้แต้ม</div>' +
-        '<div class="points-panel-line">ทุก 100 บาท = 1 กลีบ</div>' +
-        '<div class="points-panel-line">เดือนเกิดรับเพิ่ม 3 กลีบ</div>' +
-        '<div class="points-panel-line">แต้มหมดอายุทุกวันที่ 31 ธ.ค.</div>' +
+        '<div class="pts-hero-bottom">' +
+        '<div class="pts-count">' + userPoints + '</div>' +
+        '<div class="pts-count-label">กลีบสะสม</div>' +
+        '<div class="pts-progress-row">' +
+        '<div class="pts-progress-bar"><div class="pts-progress-fill" style="width:' + pct + '%"></div></div>' +
+        '<div class="pts-progress-label">' + progressLabel + '</div>' +
+        '</div>' +
+        '</div>' +
+        '</div>' +
+
+        '<div class="pts-section">' +
+        '<div class="pts-section-title">ข้อมูลบัญชี</div>' +
+        '<div class="pts-info-row"><span class="pts-info-label">กลีบหมดอายุ</span><span class="pts-info-value">' + esc(expire) + '</span></div>' +
+        '<div class="pts-info-row"><span class="pts-info-label">สมาชิกตั้งแต่</span><span class="pts-info-value">' + esc(userMeta.join_date || '-') + '</span></div>' +
+        '<div class="pts-info-row" style="display:block"><div class="pts-info-label" style="margin-bottom:6px">เดือนเกิด</div>' + birthHtml + '</div>' +
+        '</div>' +
+
+        '<div class="pts-section">' +
+        '<div class="pts-section-title">วิธีสะสมกลีบ</div>' +
+        '<div class="pts-earn-row"><div class="pts-earn-icon">💰</div><div><div>ทุก 100 ฿ = 1 กลีบ</div><div class="pts-earn-note">คำนวณจากยอดรวม ปัดลง</div></div></div>' +
+        '<div class="pts-earn-row"><div class="pts-earn-icon">🎂</div><div><div>+3 กลีบฟรีในเดือนเกิด</div><div class="pts-earn-note">Tori แจ้งในแชทอัตโนมัติ</div></div></div>' +
+        '<div class="pts-earn-row"><div class="pts-earn-icon">📅</div><div><div>กลีบหมดอายุทุก 31 ธ.ค.</div><div class="pts-earn-note">Tori เตือน 30 วันก่อนหมดอายุ</div></div></div>' +
+        '</div>' +
+
+        '<div class="pts-section">' +
+        '<div class="pts-section-title">Tier ทั้งหมด</div>' +
+        '<div class="pts-info-row"><span class="pts-info-label">🌱 Bud</span><span class="pts-info-value" style="font-weight:400;color:#8B6A52">0–9 กลีบ</span></div>' +
+        '<div class="pts-info-row"><span class="pts-info-label">🌸 Bloom</span><span class="pts-info-value" style="font-weight:400;color:#8B6A52">10–29 กลีบ · ลด 5%</span></div>' +
+        '<div class="pts-info-row"><span class="pts-info-label">🌺 Blossom</span><span class="pts-info-value" style="font-weight:400;color:#8B6A52">30+ กลีบ · ลด 10%</span></div>' +
         '</div>'
     }
-  
-    // ── CATALOG ──
+
+    function showBirthEditor() {
+      const row = document.querySelector('#points-detail .pts-info-row:last-child > div:last-child')
+      if (!row) return
+      const monthOptions = TH_MONTHS.map(function (m, i) { return '<option value="' + (i + 1) + '"' + (userMeta.birth_month === (String(i + 1)) ? ' selected' : '') + '>' + m + '</option>' }).join('')
+      row.innerHTML = '<div class="birth-editor"><select id="birth-month-select"><option value="">เลือกเดือนเกิด</option>' + monthOptions + '</select><button class="birth-save-btn" onclick="saveBirthMonthFromDropdown()">บันทึก</button></div>'
+    }
+
+    async function saveBirthMonthFromDropdown() {
+      const sel = document.getElementById('birth-month-select')
+      const month = sel ? sel.value : ''
+      if (!month) { alert('กรุณาเลือกเดือนเกิดก่อนนะคะ~'); return }
+      const ok = await saveBirthMonth(month)
+      if (ok) { userMeta.birth_month = month; updatePointsUI() }
+    }
+
+    async function saveBirthMonth(month) {
+      try {
+        const res = await fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify({ type: 'update_profile', line_user_id: currentUser.userId, name: currentUser.displayName || '', birth_month: month }) })
+        const txt = await res.text()
+        let d = {}; try { d = txt ? JSON.parse(txt) : {} } catch (_) { throw new Error('response_not_json: ' + txt.slice(0, 120)) }
+        if (!res.ok || !d.ok) throw new Error(d.error || 'update_profile_failed')
+        return true
+      } catch (e) { console.log('saveBirthMonth error', e); alert('บันทึกเดือนเกิดไม่สำเร็จค่ะ: ' + (e && e.message ? e.message : e)); return false }
+    }
+
     async function loadCatalog() {
       const now = Date.now()
-      const estimated = getEstimatedSkeletonCount()
-      renderSkeleton('featured-products', Math.min(4, estimated))
-      renderSkeleton('all-products', estimated)
-
-      try {
-        const cachedRaw = localStorage.getItem(CATALOG_CACHE_KEY)
-        if (cachedRaw) {
-          const cached = JSON.parse(cachedRaw)
-          if (cached && Array.isArray(cached.data) && (now - Number(cached.ts || 0) < CATALOG_CACHE_TTL_MS)) {
-            catalog = cached.data
-            renderProducts()
-          }
-        }
-      } catch (e) { console.log('catalog cache read error', e) }
-
+      const est = getEstSkeleton()
+      renderSkeleton('featured-products', Math.min(4, est))
+      renderSkeleton('all-products', est)
+      try { const c = JSON.parse(localStorage.getItem(CATALOG_CACHE_KEY) || 'null'); if (c && Array.isArray(c.data) && (now - Number(c.ts || 0) < CATALOG_CACHE_TTL_MS)) { catalog = c.data; renderProducts() } } catch (e) { }
       try {
         const res = await fetch(APPS_SCRIPT_URL + '?type=catalog')
         const fresh = await res.json()
-        if (!Array.isArray(fresh)) throw new Error('catalog is not array')
-        catalog = fresh
-        renderProducts()
+        if (!Array.isArray(fresh)) throw new Error('not array')
+        catalog = fresh; renderProducts()
         localStorage.setItem(CATALOG_CACHE_KEY, JSON.stringify({ ts: Date.now(), data: fresh }))
-      } catch (e) {
-        console.log('load catalog error', e)
-        if (!catalog.length) { catalog = FALLBACK_CATALOG; renderProducts() }
-      }
+      } catch (e) { console.log('load catalog error', e); if (!catalog.length) { catalog = FALLBACK_CATALOG; renderProducts() } }
     }
 
-  function renderProductCard(p) {
-    const imageUrl = getProductImageUrl(p)
-    const imageHtml = imageUrl
-      ? '<img src="' + escapeHtml(imageUrl) + '" alt="' + escapeHtml(p['ชื่อสินค้า'] || 'product') + '" loading="lazy" decoding="async">'
-      : '🌸'
-    const idArg = String(p['product_id'] || '').replace(/"/g, '&quot;')
-    return '<div class="product-card" data-product-id="' + idArg + '">' +
-      '<div class="product-img">' + imageHtml + '</div>' +
-      '<div class="product-info">' +
-      '<div class="product-name">' + escapeHtml(p['ชื่อสินค้า'] || '-') + '</div>' +
-      '<div class="product-desc">' + escapeHtml(p['รายละเอียด'] || '') + '</div>' +
-      '<div class="product-price">฿ ' + Number(p['ราคา'] || 0).toLocaleString() + '</div>' +
-      '</div></div>'
-  }
-
+    function renderProductCard(p) {
+      const url = imgUrl(p)
+      const img = url ? '<img src="' + esc(url) + '" alt="' + esc(p['ชื่อสินค้า'] || 'product') + '" loading="lazy" decoding="async">' : '🌸'
+      const id = String(p['product_id'] || '').replace(/"/g, '&quot;')
+      return '<div class="product-card" data-product-id="' + id + '"><div class="product-img">' + img + '</div><div class="product-info"><div class="product-name">' + esc(p['ชื่อสินค้า'] || '-') + '</div><div class="product-desc">' + esc(p['รายละเอียด'] || '') + '</div><div class="product-price">฿ ' + Number(p['ราคา'] || 0).toLocaleString() + '</div></div></div>'
+    }
     function renderProducts() {
-      const active = catalog.filter(function (p) {
-        return String((p && p['สถานะ']) || '').toLowerCase() === 'active'
-      })
+      const active = catalog.filter(function (p) { return String((p && p['สถานะ']) || '').toLowerCase() === 'active' })
       localStorage.setItem('ori_catalog_last_count', String(active.length))
-      const featuredHtml = active.slice(0, 4).map(renderProductCard).join('')
-      const allHtml = active.map(renderProductCard).join('')
-      document.getElementById('featured-products').innerHTML = featuredHtml || '<div class="loading">ยังไม่มีสินค้านะคะ~</div>'
-      document.getElementById('all-products').innerHTML = allHtml || '<div class="loading">ยังไม่มีสินค้านะคะ~</div>'
+      document.getElementById('featured-products').innerHTML = active.slice(0, 4).map(renderProductCard).join('') || '<div class="loading">ยังไม่มีสินค้านะคะ~</div>'
+      document.getElementById('all-products').innerHTML = active.map(renderProductCard).join('') || '<div class="loading">ยังไม่มีสินค้านะคะ~</div>'
     }
+    function renderSkeleton(id, n) { document.getElementById(id).innerHTML = Array.from({ length: n }).map(function () { return '<div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-line"></div><div class="skeleton-line short"></div></div>' }).join('') }
+    function getEstSkeleton() { const l = Number(localStorage.getItem('ori_catalog_last_count') || 0); if (l > 0) return Math.min(Math.max(l, 4), 24); try { const c = JSON.parse(localStorage.getItem(CATALOG_CACHE_KEY) || 'null'); if (c && Array.isArray(c.data)) { const n = c.data.filter(function (p) { return String((p && p['สถานะ']) || '').toLowerCase() === 'active' }).length; if (n > 0) return Math.min(Math.max(n, 4), 24) } } catch (_) { } return 6 }
 
-    function renderSkeleton(targetId, count) {
-      document.getElementById(targetId).innerHTML = Array.from({ length: count }).map(() =>
-        '<div class="skeleton-card"><div class="skeleton-img"></div>' +
-        '<div class="skeleton-line"></div><div class="skeleton-line short"></div></div>'
-      ).join('')
-    }
-
-    function getEstimatedSkeletonCount() {
-      const last = Number(localStorage.getItem('ori_catalog_last_count') || 0)
-      if (last > 0) return Math.min(Math.max(last, 4), 24)
-      try {
-        const cachedRaw = localStorage.getItem(CATALOG_CACHE_KEY)
-        if (cachedRaw) {
-          const cached = JSON.parse(cachedRaw)
-          if (cached && Array.isArray(cached.data)) {
-            const n = cached.data.filter(function (p) {
-              return String((p && p['สถานะ']) || '').toLowerCase() === 'active'
-            }).length
-            if (n > 0) return Math.min(Math.max(n, 4), 24)
-          }
-        }
-      } catch (_) { }
-      return 6
-    }
-
-    // ── CALENDAR ──
+    // CALENDAR
     function initCalendar() {
       const today = new Date()
       const min = new Date(today); min.setDate(today.getDate() + 3)
       const max = new Date(today); max.setDate(today.getDate() + 90)
-      calState.minYmd = toLocalYmd(min)
-      calState.maxYmd = toLocalYmd(max)
-      calState.year = min.getFullYear()
-      calState.month = min.getMonth()
-      calState.selected = ''
+      calState = { year: min.getFullYear(), month: min.getMonth(), selected: '', minYmd: ymd(min), maxYmd: ymd(max) }
       document.getElementById('delivery-date').value = ''
       document.getElementById('selected-date-display').textContent = ''
       renderCalendar()
     }
-
     function renderCalendar() {
-      const wrap = document.getElementById('calendar-wrap')
-      if (!wrap) return
-      const y = calState.year
-      const m = calState.month
-      const todayYmd = toLocalYmd(new Date())
-      const firstDay = new Date(y, m, 1).getDay()
-      const daysInMonth = new Date(y, m + 1, 0).getDate()
-
-      const minDate = new Date(calState.minYmd)
-      const maxDate = new Date(calState.maxYmd)
-      const canPrev = !(y === minDate.getFullYear() && m <= minDate.getMonth())
-      const canNext = !(y === maxDate.getFullYear() && m >= maxDate.getMonth())
-
-      // empty cells + day cells
-      let cells = Array(firstDay).fill('<div class="cal-cell cal-empty"></div>').join('')
-      for (let d = 1; d <= daysInMonth; d++) {
-        const ymd = y + '-' + String(m + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0')
-        const isDisabled = ymd < calState.minYmd || ymd > calState.maxYmd
-        const isSelected = ymd === calState.selected
-        const isToday = ymd === todayYmd
-        let cls = 'cal-cell'
-        if (isDisabled) cls += ' cal-disabled'
-        if (isSelected) cls += ' cal-selected'
-        if (isToday && !isSelected) cls += ' cal-today'
-        const onclick = isDisabled ? '' : 'onclick="pickDate(\'' + ymd + '\')"'
-        cells += '<div class="' + cls + '" ' + onclick + '>' + d + '</div>'
+      const wrap = document.getElementById('calendar-wrap'); if (!wrap) return
+      const { year: y, month: m, minYmd, maxYmd, selected } = calState
+      const todayYmd = ymd(new Date())
+      const first = new Date(y, m, 1).getDay()
+      const days = new Date(y, m + 1, 0).getDate()
+      const minD = new Date(minYmd), maxD = new Date(maxYmd)
+      const canPrev = !(y === minD.getFullYear() && m <= minD.getMonth())
+      const canNext = !(y === maxD.getFullYear() && m >= maxD.getMonth())
+      let cells = Array(first).fill('<div class="cal-cell cal-empty"></div>').join('')
+      for (let d = 1; d <= days; d++) {
+        const v = y + '-' + String(m + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0')
+        const dis = v < minYmd || v > maxYmd
+        let cls = 'cal-cell' + (dis ? ' cal-disabled' : '') + (v === selected ? ' cal-selected' : '') + (v === todayYmd && v !== selected ? ' cal-today' : '')
+        cells += '<div class="' + cls + '"' + (dis ? '' : ' onclick="pickDate(\'' + v + '\')"') + '>' + d + '</div>'
       }
-
-      const dayLabels = TH_DAYS_SHORT.map(function (d) {
-        return '<div class="cal-day-label">' + d + '</div>'
-      }).join('')
-
-      wrap.innerHTML =
-        '<div class="cal-header">' +
-        '<button class="cal-nav" onclick="calNav(-1)" ' + (canPrev ? '' : 'disabled') + '>&#8249;</button>' +
-        '<div class="cal-month-label">' + TH_MONTHS[m] + ' ' + (y + 543) + '</div>' +
-        '<button class="cal-nav" onclick="calNav(1)" ' + (canNext ? '' : 'disabled') + '>&#8250;</button>' +
-        '</div>' +
-        '<div class="cal-grid-wrap">' +
-        '<div class="cal-day-labels">' + dayLabels + '</div>' +
-        '<div class="cal-grid">' + cells + '</div>' +
-        '</div>'
+      wrap.innerHTML = '<div class="cal-header"><button class="cal-nav" onclick="calNav(-1)"' + (canPrev ? '' : ' disabled') + '>&#8249;</button><div class="cal-month-label">' + TH_MONTHS[m] + ' ' + (y + 543) + '</div><button class="cal-nav" onclick="calNav(1)"' + (canNext ? '' : ' disabled') + '>&#8250;</button></div><div class="cal-grid-wrap"><div class="cal-day-labels">' + TH_DAYS_SHORT.map(function (d) { return '<div class="cal-day-label">' + d + '</div>' }).join('') + '</div><div class="cal-grid">' + cells + '</div></div>'
+    }
+    function calNav(dir) { calState.month += dir; if (calState.month > 11) { calState.month = 0; calState.year++ } if (calState.month < 0) { calState.month = 11; calState.year-- } renderCalendar() }
+    function pickDate(v) {
+      calState.selected = v; document.getElementById('delivery-date').value = v; renderCalendar()
+      const d = new Date(v + 'T00:00:00')
+      document.getElementById('selected-date-display').textContent = 'เลือก: วัน' + TH_DAYS[d.getDay()] + 'ที่ ' + d.getDate() + ' ' + TH_MONTHS_SHORT[d.getMonth()] + ' ' + (d.getFullYear() + 543)
     }
 
-    function calNav(dir) {
-      calState.month += dir
-      if (calState.month > 11) { calState.month = 0; calState.year++ }
-      if (calState.month < 0) { calState.month = 11; calState.year-- }
-      renderCalendar()
-    }
-
-    function pickDate(ymd) {
-      calState.selected = ymd
-      document.getElementById('delivery-date').value = ymd
-      renderCalendar()
-      const d = new Date(ymd + 'T00:00:00')
-      const label = 'วัน' + TH_DAYS[d.getDay()] + 'ที่ ' + d.getDate() + ' ' +
-        TH_MONTHS_SHORT[d.getMonth()] + ' ' + (d.getFullYear() + 543)
-      document.getElementById('selected-date-display').textContent = 'เลือก: ' + label
-    }
-
-    // ── SELECT PRODUCT ──
     function selectProduct(id) {
       selectedProduct = catalog.find(function (p) { return String(p['product_id']) === String(id) })
       if (!selectedProduct) return
       initCalendar()
-      const discount = getDiscount()
-      const finalPrice = Number(selectedProduct['ราคา'] || 0) - discount
-      document.getElementById('selected-product-info').innerHTML =
-        '<div style="font-size:13px;font-weight:600;color:#0A2A3A">' + escapeHtml(selectedProduct['ชื่อสินค้า']) + '</div>' +
-        '<div style="font-size:11px;color:#8B6A52;margin-top:2px">' + escapeHtml(selectedProduct['รายละเอียด'] || '') + '</div>' +
-        '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">' +
-        '<div style="font-size:16px;font-weight:700;color:#0A2A3A">฿ ' + finalPrice.toLocaleString() + '</div>' +
-        (discount > 0 ? '<div style="font-size:11px;color:#8FBF8F">ส่วนลด ' + getDiscountPercent() + '%</div>' : '') +
-        '</div>'
+      const disc = getDiscount()
+      const fp = Number(selectedProduct['ราคา'] || 0) - disc
+      document.getElementById('selected-product-info').innerHTML = '<div style="font-size:13px;font-weight:600;color:#0A2A3A">' + esc(selectedProduct['ชื่อสินค้า']) + '</div><div style="font-size:11px;color:#8B6A52;margin-top:2px">' + esc(selectedProduct['รายละเอียด'] || '') + '</div><div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px"><div style="font-size:16px;font-weight:700;color:#0A2A3A">฿ ' + fp.toLocaleString() + '</div>' + (disc > 0 ? '<div style="font-size:11px;color:#8FBF8F">ส่วนลด ' + getDiscountPercent() + '%</div>' : '') + '</div>'
       showPage('order')
     }
-
     function getDiscountPercent() { return { bud: 0, bloom: 5, blossom: 10 }[userTier] || 0 }
-    function getDiscount() {
-      if (!selectedProduct) return 0
-      return Math.floor(Number(selectedProduct['ราคา'] || 0) * getDiscountPercent() / 100)
-    }
-    async function ensureBirthMonthProfile() {
-        if (userMeta.birth_month) return
+    function getDiscount() { if (!selectedProduct) return 0; return Math.floor(Number(selectedProduct['ราคา'] || 0) * getDiscountPercent() / 100) }
 
-        const month = prompt('ระบุเดือนเกิด (1-12) เพื่อรับโบนัสเดือนเกิดค่ะ')
-        if (!month) return
-
-        const m = Number(month)
-        if (!Number.isInteger(m) || m < 1 || m > 12) {
-          alert('เดือนเกิดต้องเป็นตัวเลข 1-12')
-          return
-        }
-
-        const ok = await saveBirthMonth(String(m))
-        if (ok) {
-          userMeta.birth_month = String(m)
-          updatePointsUI()
-        }
-      }
-
-  async function saveBirthMonth(month) {
-    try {
-      const payload = {
-        type: 'update_profile',
-        line_user_id: currentUser.userId,
-        name: currentUser.displayName || '',
-        birth_month: month
-      }
-
-      const res = await fetch(APPS_SCRIPT_URL, {
-        method: 'POST',
-        body: JSON.stringify(payload)
-      })
-
-      const txt = await res.text()
-      let data = {}
-      try {
-        data = txt ? JSON.parse(txt) : {}
-      } catch (_) {
-        throw new Error('response_not_json: ' + txt.slice(0, 120))
-      }
-
-      if (!res.ok || !data.ok) {
-        throw new Error(data.error || 'update_profile_failed')
-      }
-
-      return true
-    } catch (e) {
-      console.log('saveBirthMonth error', e)
-      alert('บันทึกเดือนเกิดไม่สำเร็จ: ' + (e && e.message ? e.message : e))
-      return false
-    }
-  }
-
-      function renderBirthEditControl() {
-          if (userMeta.birth_month) {
-            return '' +
-              '<span class="birth-edit-wrap">' +
-              '<button class="birth-edit-btn" onclick="openBirthMonthEditor()" aria-label="แก้ไขเดือนเกิด" title="แก้ไขเดือนเกิด">✏️</button>' +
-              '</span>'
-          }
-
-          return '' +
-            '<span class="birth-edit-wrap">' +
-            '<select id="birth-month-select" class="birth-month-select">' +
-            '<option value="">เลือกเดือน</option>' +
-            '<option value="1">1</option>' +
-            '<option value="2">2</option>' +
-            '<option value="3">3</option>' +
-            '<option value="4">4</option>' +
-            '<option value="5">5</option>' +
-            '<option value="6">6</option>' +
-            '<option value="7">7</option>' +
-            '<option value="8">8</option>' +
-            '<option value="9">9</option>' +
-            '<option value="10">10</option>' +
-            '<option value="11">11</option>' +
-            '<option value="12">12</option>' +
-            '</select>' +
-            '<button class="birth-save-btn" onclick="saveBirthMonthFromDropdown()">บันทึก</button>' +
-            '</span>'
-        }
-
-        async function saveBirthMonthFromDropdown() {
-          const select = document.getElementById('birth-month-select')
-          const month = select ? select.value : ''
-          if (!month) {
-            alert('กรุณาเลือกเดือนเกิดก่อน')
-            return
-          }
-
-          const ok = await saveBirthMonth(month)
-          if (!ok) {
-            alert('บันทึกเดือนเกิดไม่สำเร็จ ลองอีกครั้งนะคะ')
-            return
-          }
-
-          userMeta.birth_month = month
-          updatePointsUI()
-        }
-
-          function openBirthMonthEditor() {
-              const newMonth = prompt('ระบุเดือนเกิดใหม่ (1-12)', userMeta.birth_month || '')
-              if (!newMonth) return
-  
-              const m = Number(newMonth)
-              if (!Number.isInteger(m) || m < 1 || m > 12) {
-                alert('เดือนเกิดต้องเป็นตัวเลข 1-12')
-                return
-              }
-  
-              saveBirthMonth(String(m)).then(function (ok) {
-                if (ok) {
-                  userMeta.birth_month = String(m)
-                  updatePointsUI()
-                }
-              })
-            }
-            
-    // ── SUMMARY ──
     function goToSummary() {
-      const address = document.getElementById('address').value
+      const addr = document.getElementById('address').value
       const phone = document.getElementById('phone').value
       const date = document.getElementById('delivery-date').value
-      if (!address || !phone || !date) {
-        alert('กรุณากรอกข้อมูลให้ครบนะคะ~')
-        return
-      }
-      const discount = getDiscount()
-      const finalPrice = Number(selectedProduct['ราคา'] || 0) - discount
-      const cardMessage = document.getElementById('card-message').value
-
-      // แปลงวันที่เป็นภาษาไทย
+      if (!addr || !phone || !date) { alert('กรุณากรอกข้อมูลให้ครบนะคะ~'); return }
+      const disc = getDiscount(), fp = Number(selectedProduct['ราคา'] || 0) - disc
+      const card = document.getElementById('card-message').value
       const d = new Date(date + 'T00:00:00')
-      const dateLabel = 'วัน' + TH_DAYS[d.getDay()] + 'ที่ ' + d.getDate() + ' ' +
-        TH_MONTHS_SHORT[d.getMonth()] + ' ' + (d.getFullYear() + 543)
-
-      document.getElementById('summary-content').innerHTML =
-        '<div class="summary-row"><span>สินค้า</span><span>' + escapeHtml(selectedProduct['ชื่อสินค้า']) + '</span></div>' +
-        '<div class="summary-row"><span>ราคา</span><span>฿ ' + Number(selectedProduct['ราคา'] || 0).toLocaleString() + '</span></div>' +
-        (discount > 0 ? '<div class="summary-row"><span>ส่วนลด ' + getDiscountPercent() + '%</span><span style="color:#8FBF8F">-฿ ' + discount + '</span></div>' : '') +
-        '<div class="summary-row"><span style="font-weight:700">ยอดรวม</span><span class="summary-total">฿ ' + finalPrice.toLocaleString() + '</span></div>' +
-        '<div class="summary-row"><span>ที่อยู่</span><span style="text-align:right;max-width:60%">' + escapeHtml(address) + '</span></div>' +
-        '<div class="summary-row"><span>เบอร์</span><span>' + escapeHtml(phone) + '</span></div>' +
-        '<div class="summary-row"><span>วันรับ</span><span>' + escapeHtml(dateLabel) + '</span></div>' +
-        (cardMessage ? '<div class="summary-row"><span>การ์ด</span><span style="text-align:right;max-width:60%;font-style:italic">"' + escapeHtml(cardMessage) + '"</span></div>' : '')
-
+      const dl = 'วัน' + TH_DAYS[d.getDay()] + 'ที่ ' + d.getDate() + ' ' + TH_MONTHS_SHORT[d.getMonth()] + ' ' + (d.getFullYear() + 543)
+      document.getElementById('summary-content').innerHTML = '<div class="summary-row"><span>สินค้า</span><span>' + esc(selectedProduct['ชื่อสินค้า']) + '</span></div><div class="summary-row"><span>ราคา</span><span>฿ ' + Number(selectedProduct['ราคา'] || 0).toLocaleString() + '</span></div>' + (disc > 0 ? '<div class="summary-row"><span>ส่วนลด ' + getDiscountPercent() + '%</span><span style="color:#8FBF8F">-฿ ' + disc + '</span></div>' : '') + '<div class="summary-row"><span style="font-weight:700">ยอดรวม</span><span class="summary-total">฿ ' + fp.toLocaleString() + '</span></div><div class="summary-row"><span>ที่อยู่</span><span style="text-align:right;max-width:60%">' + esc(addr) + '</span></div><div class="summary-row"><span>เบอร์</span><span>' + esc(phone) + '</span></div><div class="summary-row"><span>วันรับ</span><span>' + esc(dl) + '</span></div>' + (card ? '<div class="summary-row"><span>การ์ด</span><span style="text-align:right;max-width:60%;font-style:italic">"' + esc(card) + '"</span></div>' : '')
       showPage('summary')
     }
 
-    // ── SUBMIT ORDER ──
     async function submitOrder() {
       if (!selectedProduct) { alert('กรุณาเลือกสินค้าก่อนนะคะ~'); showPage('catalog'); return }
-      const submitBtn = document.querySelector('#page-summary .btn-primary')
-      if (submitBtn && submitBtn.disabled) return
-
-      const discount = getDiscount()
-      const finalPrice = Number(selectedProduct['ราคา'] || 0) - discount
-      const orderData = {
-        type: 'order',
-        line_user_id: (currentUser && currentUser.userId) || '',
-        name: (currentUser && currentUser.displayName) || '',
-        product: selectedProduct['ชื่อสินค้า'],
-        price: finalPrice,
-        original_price: Number(selectedProduct['ราคา'] || 0),
-        discount: discount,
-        address: (document.getElementById('address').value || '').trim(),
-        phone: (document.getElementById('phone').value || '').trim(),
-        delivery_date: document.getElementById('delivery-date').value,
-        card_message: (document.getElementById('card-message').value || '').trim()
-      }
-
-      if (!orderData.address || !orderData.phone || !orderData.delivery_date) {
-        alert('กรุณากรอกข้อมูลให้ครบนะคะ~'); showPage('order'); return
-      }
-
+      const btn = document.querySelector('#page-summary .btn-primary')
+      if (btn && btn.disabled) return
+      const disc = getDiscount(), fp = Number(selectedProduct['ราคา'] || 0) - disc
+      const order = { type: 'order', line_user_id: (currentUser && currentUser.userId) || '', name: (currentUser && currentUser.displayName) || '', product: selectedProduct['ชื่อสินค้า'], price: fp, original_price: Number(selectedProduct['ราคา'] || 0), discount: disc, address: (document.getElementById('address').value || '').trim(), phone: (document.getElementById('phone').value || '').trim(), delivery_date: document.getElementById('delivery-date').value, card_message: (document.getElementById('card-message').value || '').trim() }
+      if (!order.address || !order.phone || !order.delivery_date) { alert('กรุณากรอกข้อมูลให้ครบนะคะ~'); showPage('order'); return }
       try {
-        if (submitBtn) { submitBtn.disabled = true; submitBtn.style.opacity = '0.7'; submitBtn.textContent = 'กำลังส่งออเดอร์...' }
-
-        const res = await fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify(orderData) })
-        const raw = await res.text()
-        let data = {}
-        try { data = raw ? JSON.parse(raw) : {} } catch (_) { }
+        if (btn) { btn.disabled = true; btn.style.opacity = '0.7'; btn.textContent = 'กำลังส่งออเดอร์...' }
+        const res = await fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify(order) })
+        const raw = await res.text(); let data = {}; try { data = raw ? JSON.parse(raw) : {} } catch (_) { }
         if (!res.ok || data.ok === false) throw new Error('save_failed: ' + (data.error || raw || String(res.status)))
-
-        let chatWarn = ''
+        let warn = ''
         try {
           if (liff.isInClient()) {
-            const d = new Date(orderData.delivery_date + 'T00:00:00')
-            const dateLabel = 'วัน' + TH_DAYS[d.getDay()] + 'ที่ ' + d.getDate() + ' ' +
-              TH_MONTHS_SHORT[d.getMonth()] + ' ' + (d.getFullYear() + 543)
-            await liff.sendMessages([{
-              type: 'flex',
-              altText: 'สรุปออเดอร์จาก Ori',
-              contents: {
-                type: 'bubble',
-                body: {
-                  type: 'box', layout: 'vertical', spacing: 'sm',
-                  contents: [
-                    { type: 'text', text: 'รับออเดอร์แล้วค่ะ 🌸', weight: 'bold', size: 'lg' },
-                    { type: 'text', text: 'คุณ ' + orderData.name, size: 'sm', color: '#666666', margin: 'md' },
-                    { type: 'separator', margin: 'md' },
-                    { type: 'text', text: 'สินค้า: ' + orderData.product, wrap: true, margin: 'md' },
-                    { type: 'text', text: 'ราคาเดิม: ฿ ' + Number(orderData.original_price).toLocaleString(), size: 'sm', color: '#666666' },
-                    ...(orderData.discount > 0 ? [{ type: 'text', text: 'ส่วนลด: -฿ ' + Number(orderData.discount).toLocaleString(), size: 'sm', color: '#2E7D32' }] : []),
-                    { type: 'text', text: 'ยอดรวม: ฿ ' + Number(orderData.price).toLocaleString(), weight: 'bold', size: 'md' },
-                    { type: 'separator', margin: 'md' },
-                    { type: 'text', text: 'วันรับ: ' + dateLabel, margin: 'md' },
-                    { type: 'text', text: 'เบอร์: ' + orderData.phone },
-                    { type: 'text', text: 'ที่อยู่: ' + orderData.address, wrap: true },
-                    { type: 'text', text: 'การ์ด: ' + (orderData.card_message ? '"' + orderData.card_message + '"' : '-'), wrap: true },
-                    { type: 'text', text: 'paper blooms, real feelings.', size: 'xs', color: '#999999', margin: 'lg' }
-                  ]
-                }
-              }
-            }])
-          } else {
-            chatWarn = 'บันทึกออเดอร์แล้ว แต่ส่งข้อความแชทไม่ได้ เพราะไม่ได้เปิดใน LINE client'
-          }
-        } catch (msgErr) {
-          console.warn('sendMessages failed:', msgErr)
-          chatWarn = 'บันทึกออเดอร์แล้ว แต่ส่งข้อความสรุปเข้าแชทไม่สำเร็จ'
-        }
-
-        document.getElementById('page-summary').innerHTML =
-          '<div style="text-align:center;padding:60px 20px">' +
-          '<div style="font-size:60px;margin-bottom:16px">🌸</div>' +
-          '<div style="font-size:22px;font-weight:700;color:#0A2A3A;margin-bottom:8px">เย้! ออเดอร์มาแล้วค่ะ!</div>' +
-          '<div style="font-size:13px;color:#6B3A2A;font-style:italic;margin-bottom:24px">"โทริจะพับดอกไม้ให้ด้วยใจเลยนะคะ~"</div>' +
-          (chatWarn ? '<div style="font-size:12px;color:#8B6A52;margin-bottom:14px">' + chatWarn + '</div>' : '') +
-          '<button class="btn-primary" onclick="showPage(\'home\')">กลับหน้าแรก</button>' +
-          '</div>'
-
+            const d = new Date(order.delivery_date + 'T00:00:00')
+            const dl = 'วัน' + TH_DAYS[d.getDay()] + 'ที่ ' + d.getDate() + ' ' + TH_MONTHS_SHORT[d.getMonth()] + ' ' + (d.getFullYear() + 543)
+            await liff.sendMessages([{ type: 'flex', altText: 'สรุปออเดอร์จาก Ori', contents: { type: 'bubble', body: { type: 'box', layout: 'vertical', spacing: 'sm', contents: [{ type: 'text', text: 'รับออเดอร์แล้วค่ะ 🌸', weight: 'bold', size: 'lg' }, { type: 'text', text: 'คุณ ' + order.name, size: 'sm', color: '#666666', margin: 'md' }, { type: 'separator', margin: 'md' }, { type: 'text', text: 'สินค้า: ' + order.product, wrap: true, margin: 'md' }, { type: 'text', text: 'ราคาเดิม: ฿ ' + Number(order.original_price).toLocaleString(), size: 'sm', color: '#666666' }, ...(order.discount > 0 ? [{ type: 'text', text: 'ส่วนลด: -฿ ' + Number(order.discount).toLocaleString(), size: 'sm', color: '#2E7D32' }] : []), { type: 'text', text: 'ยอดรวม: ฿ ' + Number(order.price).toLocaleString(), weight: 'bold', size: 'md' }, { type: 'separator', margin: 'md' }, { type: 'text', text: 'วันรับ: ' + dl, margin: 'md' }, { type: 'text', text: 'เบอร์: ' + order.phone }, { type: 'text', text: 'ที่อยู่: ' + order.address, wrap: true }, { type: 'text', text: 'การ์ด: ' + (order.card_message ? '"' + order.card_message + '"' : '-'), wrap: true }, { type: 'text', text: 'paper blooms, real feelings.', size: 'xs', color: '#999999', margin: 'lg' }] } } }])
+          } else { warn = 'บันทึกออเดอร์แล้ว แต่ส่งข้อความแชทไม่ได้เพราะไม่ได้เปิดใน LINE client' }
+        } catch (e) { console.warn('sendMessages failed:', e); warn = 'บันทึกออเดอร์แล้ว แต่ส่งข้อความสรุปเข้าแชทไม่สำเร็จ' }
+        document.getElementById('page-summary').innerHTML = '<div style="text-align:center;padding:60px 20px"><div style="font-size:60px;margin-bottom:16px">🌸</div><div style="font-size:22px;font-weight:700;color:#0A2A3A;margin-bottom:8px">เย้! ออเดอร์มาแล้วค่ะ!</div><div style="font-size:13px;color:#6B3A2A;font-style:italic;margin-bottom:24px">"โทริจะพับดอกไม้ให้ด้วยใจเลยนะคะ~"</div>' + (warn ? '<div style="font-size:12px;color:#8B6A52;margin-bottom:14px">' + warn + '</div>' : '') + '<button class="btn-primary" onclick="showPage(\'home\')">กลับหน้าแรก</button></div>'
       } catch (e) {
-        console.log('submit order error:', e)
-        alert('ส่งออเดอร์ไม่สำเร็จ: ' + (e && e.message ? e.message : e))
-        if (submitBtn) { submitBtn.disabled = false; submitBtn.style.opacity = '1'; submitBtn.textContent = 'ยืนยันและส่งออเดอร์' }
-      }
-    }
-    function bindProductTapDelegation() {
-        ;['featured-products', 'all-products'].forEach(function (containerId) {
-          const el = document.getElementById(containerId)
-          if (!el) return
-          if (el.dataset.bound === '1') return
-          el.dataset.bound = '1'
-
-          const onTap = function (evt) {
-            const card = evt.target.closest('.product-card')
-            if (!card) return
-            const pid = card.getAttribute('data-product-id')
-            if (!pid) return
-            selectProduct(pid)
-          }
-
-          el.addEventListener('click', onTap)
-          el.addEventListener('touchend', onTap, { passive: true })
-        })
-      }
-
-    // ── NAVIGATION ──
-  function showPage(name) {
-    document.querySelectorAll('.page').forEach(function (p) { p.classList.remove('active') })
-    document.querySelectorAll('.nav-item').forEach(function (n) { n.classList.remove('active') })
-    document.getElementById('page-' + name).classList.add('active')
-    const navEl = document.getElementById('nav-' + name)
-    if (navEl) navEl.classList.add('active')
-
-    if (name === 'order' && selectedProduct) {
-      const wrap = document.getElementById('calendar-wrap')
-      if (wrap && !wrap.innerHTML.trim()) {
-        initCalendar()
+        console.log('submit error:', e); alert('ส่งออเดอร์ไม่สำเร็จ: ' + (e && e.message ? e.message : e))
+        if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.textContent = 'ยืนยันและส่งออเดอร์' }
       }
     }
 
-    window.scrollTo(0, 0)
-  }
+    function bindTaps() {
+      ;['featured-products', 'all-products'].forEach(function (id) {
+        const el = document.getElementById(id); if (!el || el.dataset.bound === '1') return; el.dataset.bound = '1'
+        const fn = function (e) { const c = e.target.closest('.product-card'); if (!c) return; const p = c.getAttribute('data-product-id'); if (p) selectProduct(p) }
+        el.addEventListener('click', fn); el.addEventListener('touchend', fn, { passive: true })
+      })
+    }
+
+    function showPage(name) {
+      document.querySelectorAll('.page').forEach(function (p) { p.classList.remove('active') })
+      document.querySelectorAll('.nav-item').forEach(function (n) { n.classList.remove('active') })
+      document.getElementById('page-' + name).classList.add('active')
+      const nav = document.getElementById('nav-' + name); if (nav) nav.classList.add('active')
+      if (name === 'order' && selectedProduct) { const w = document.getElementById('calendar-wrap'); if (w && !w.innerHTML.trim()) initCalendar() }
+      window.scrollTo(0, 0)
+    }
 
     init()
   </script>
