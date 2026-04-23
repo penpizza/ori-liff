@@ -902,7 +902,7 @@
       const avatarHtml = (currentUser && currentUser.pictureUrl) ? '<img src="' + esc(currentUser.pictureUrl) + '" style="width:100%;height:100%;object-fit:cover">' : '🌸'
       const discountHtml = t.discount > 0 ? '<div class="pts-discount-tag">✦ ส่วนลด ' + t.discount + '% ทุกออเดอร์</div>' : ''
       const progressLabel = t.next ? 'อีก ' + t.needed + ' กลีบ → ' + t.next : 'tier สูงสุดแล้วค่ะ 🌺'
-
+      const joinLabel = formatExpireDate(userMeta.join_date) || '-'
       // birth month UI
       const monthOptions = TH_MONTHS.map(function (m, i) { return '<option value="' + (i + 1) + '"' + (userMeta.birth_month === (String(i + 1)) ? ' selected' : '') + '>' + m + '</option>' }).join('')
       const birthHtml = birthName
@@ -932,7 +932,7 @@
         '<div class="pts-section">' +
         '<div class="pts-section-title">ข้อมูลบัญชี</div>' +
         '<div class="pts-info-row"><span class="pts-info-label">กลีบหมดอายุ</span><span class="pts-info-value">' + esc(expire) + '</span></div>' +
-        '<div class="pts-info-row"><span class="pts-info-label">สมาชิกตั้งแต่</span><span class="pts-info-value">' + esc(userMeta.join_date || '-') + '</span></div>' +
+        '<div class="pts-info-row"><span class="pts-info-label">สมาชิกตั้งแต่</span><span class="pts-info-value">' + esc(joinLabel) + '</span></div>' +
         '<div class="pts-info-row" style="display:block"><div class="pts-info-label" style="margin-bottom:6px">เดือนเกิด</div>' + birthHtml + '</div>' +
         '</div>' +
 
