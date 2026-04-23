@@ -877,13 +877,27 @@
       renderPointsPage()
     }
 
+    function formatExpireDate(raw) {
+        if (!raw) return ''
+        // ถ้าเป็น Date object string เช่น "Thu Dec 31 2026 00:00:00 GMT+0700"
+        const d = new Date(raw)
+        if (!isNaN(d.getTime())) {
+          const day = String(d.getDate()).padStart(2, '0')
+          const month = String(d.getMonth() + 1).padStart(2, '0')
+          const year = d.getFullYear()
+          return day + '/' + month + '/' + year
+        }
+        // ถ้าเป็น string ธรรมดาอยู่แล้ว ส่งกลับตรงๆ
+        return String(raw)
+      }
+
     function renderPointsPage() {
       const tInfo = { bud: { label: '🌱 Bud', discount: 0, next: 'Bloom', needed: Math.max(0, 10 - userPoints) }, bloom: { label: '🌸 Bloom', discount: 5, next: 'Blossom', needed: Math.max(0, 30 - userPoints) }, blossom: { label: '🌺 Blossom', discount: 10, next: null, needed: 0 } }
       const t = tInfo[userTier] || tInfo.bud
       const max = { bud: 10, bloom: 30, blossom: 99 }
       const pct = Math.min((userPoints / (max[userTier] || 10)) * 100, 100)
       const name = userMeta.name || (currentUser && currentUser.displayName) || 'Profile'
-      const expire = userMeta.expire_points || ('31 ธ.ค. ' + (new Date().getFullYear() + 543))
+      const expire = formatExpireDate(userMeta.expire_points) || ('31/12/' + new Date().getFullYear())
       const birthName = userMeta.birth_month ? (TH_MONTHS[Number(userMeta.birth_month) - 1] || userMeta.birth_month) : null
       const avatarHtml = (currentUser && currentUser.pictureUrl) ? '<img src="' + esc(currentUser.pictureUrl) + '" style="width:100%;height:100%;object-fit:cover">' : '🌸'
       const discountHtml = t.discount > 0 ? '<div class="pts-discount-tag">✦ ส่วนลด ' + t.discount + '% ทุกออเดอร์</div>' : ''
