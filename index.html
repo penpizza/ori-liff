@@ -1038,28 +1038,40 @@
         }
       }
 
-      async function saveBirthMonth(month) {
-        try {
-          const payload = {
-            type: 'update_profile',
-            line_user_id: currentUser.userId,
-            name: currentUser.displayName || '',
-            birth_month: month
-          }
-
-          const res = await fetch(APPS_SCRIPT_URL, {
-            method: 'POST',
-            body: JSON.stringify(payload)
-          })
-
-          const txt = await res.text()
-          const data = txt ? JSON.parse(txt) : {}
-          return !!(res.ok && data.ok)
-        } catch (e) {
-          console.log('saveBirthMonth error', e)
-          return false
-        }
+  async function saveBirthMonth(month) {
+    try {
+      const payload = {
+        type: 'update_profile',
+        line_user_id: currentUser.userId,
+        name: currentUser.displayName || '',
+        birth_month: month
       }
+
+      const res = await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      })
+
+      const txt = await res.text()
+      let data = {}
+      try {
+        data = txt ? JSON.parse(txt) : {}
+      } catch (_) {
+        throw new Error('response_not_json: ' + txt.slice(0, 120))
+      }
+
+      if (!res.ok || !data.ok) {
+        throw new Error(data.error || 'update_profile_failed')
+      }
+
+      return true
+    } catch (e) {
+      console.log('saveBirthMonth error', e)
+      alert('บันทึกเดือนเกิดไม่สำเร็จ: ' + (e && e.message ? e.message : e))
+      return false
+    }
+  }
+
       function renderBirthEditControl() {
           if (userMeta.birth_month) {
             return '' +
@@ -1107,72 +1119,24 @@
           updatePointsUI()
         }
 
-        function renderBirthEditControl() {
-            if (userMeta.birth_month) {
-              return '' +
-                '<span class="birth-edit-wrap">' +
-                '<button class="birth-edit-btn" onclick="openBirthMonthEditor()" aria-label="แก้ไขเดือนเกิด" title="แก้ไขเดือนเกิด">✏️</button>' +
-                '</span>'
+          function openBirthMonthEditor() {
+              const newMonth = prompt('ระบุเดือนเกิดใหม่ (1-12)', userMeta.birth_month || '')
+              if (!newMonth) return
+  
+              const m = Number(newMonth)
+              if (!Number.isInteger(m) || m < 1 || m > 12) {
+                alert('เดือนเกิดต้องเป็นตัวเลข 1-12')
+                return
+              }
+  
+              saveBirthMonth(String(m)).then(function (ok) {
+                if (ok) {
+                  userMeta.birth_month = String(m)
+                  updatePointsUI()
+                }
+              })
             }
-
-            return '' +
-              '<span class="birth-edit-wrap">' +
-              '<select id="birth-month-select" class="birth-month-select">' +
-              '<option value="">เลือกเดือน</option>' +
-              '<option value="1">1</option>' +
-              '<option value="2">2</option>' +
-              '<option value="3">3</option>' +
-              '<option value="4">4</option>' +
-              '<option value="5">5</option>' +
-              '<option value="6">6</option>' +
-              '<option value="7">7</option>' +
-              '<option value="8">8</option>' +
-              '<option value="9">9</option>' +
-              '<option value="10">10</option>' +
-              '<option value="11">11</option>' +
-              '<option value="12">12</option>' +
-              '</select>' +
-              '<button class="birth-save-btn" onclick="saveBirthMonthFromDropdown()">บันทึก</button>' +
-              '</span>'
-          }
-
-          async function saveBirthMonthFromDropdown() {
-            const select = document.getElementById('birth-month-select')
-            const month = select ? select.value : ''
-            if (!month) {
-              alert('กรุณาเลือกเดือนเกิดก่อน')
-              return
-            }
-
-            const ok = await saveBirthMonth(month)
-            if (!ok) {
-              alert('บันทึกเดือนเกิดไม่สำเร็จ ลองอีกครั้งนะคะ')
-              return
-            }
-
-            userMeta.birth_month = month
-            updatePointsUI()
-          }
-
-          async function openBirthMonthEditor() {
-            const month = prompt('กรอกเดือนเกิด (1-12)', userMeta.birth_month || '')
-            if (!month) return
-
-            const m = Number(month)
-            if (!Number.isInteger(m) || m < 1 || m > 12) {
-              alert('เดือนเกิดต้องเป็นตัวเลข 1-12')
-              return
-            }
-
-            const ok = await saveBirthMonth(String(m))
-            if (!ok) {
-              alert('บันทึกเดือนเกิดไม่สำเร็จ ลองอีกครั้งนะคะ')
-              return
-            }
-
-            userMeta.birth_month = String(m)
-            updatePointsUI()
-          }
+            
     // ── SUMMARY ──
     function goToSummary() {
       const address = document.getElementById('address').value
